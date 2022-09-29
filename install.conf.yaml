@@ -4,15 +4,20 @@
 
 - clean: ['~']
 
-- link:
-    ~/.gitconfig: "config/git/git"
-
-- create:
-    - ~/.vim/undo-history
-
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
   -
     command: ./config/macos/setup-homebrew.sh
     description: Installing Homebrew and Essential Packages
     stdout: true
+
+- link:
+    ~/.gitconfig: config/git/git
+    ~/.oh-my-zsh: config/zsh/ohmyzsh
+    ~/.zshrc:
+      path: config/zsh/zshrc
+      force: true
+
+- create:
+    - ~/.vim/undo-history
+
