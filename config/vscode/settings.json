@@ -1,0 +1,495 @@
+{
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[markdown]": {
+        "editor.defaultFormatter": "yzhang.markdown-all-in-one",
+        "editor.codeActionsOnSave": {
+            "source.fixAll.markdownlint": true
+        },
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+            "source.fixAll": true,
+        },
+        "editor.formatOnSave": true,
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": true,
+        },
+    },
+    "auto-rename-tag.activationOnLanguage": [
+        "javascriptreact"
+    ],
+    "breadcrumbs.symbolPath": "off",
+    "cfnLint.validateUsingJsonSchema": false,
+    "comment-ts.includeDescriptionTag": true,
+    "crystal-lang.server": "/usr/local/bin/crystalline",
+    "debug.showBreakpointsInOverviewRuler": true,
+    "editor.codeLens": true,
+    "editor.codeLensFontSize": 10,
+    "editor.colorDecorators": false,
+    "editor.cursorBlinking": "smooth",
+    "editor.cursorStyle": "block",
+    "editor.cursorSurroundingLines": 5, // Trial
+    "editor.dragAndDrop": false,
+    "editor.fontFamily": "'JetBrainsMono Nerd Font', 'RobotoMono Nerd Font', Menlo, Monaco, 'Courier New', monospace",
+    "editor.fontSize": 13,
+    "editor.formatOnPaste": true,
+    // Brackets/Guides
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.indentation": true,
+    "editor.guides.bracketPairs": true,
+    "editor.guides.bracketPairsHorizontal": "active",
+    "editor.hover.above": false, // Trial
+    "editor.inlayHints.fontSize": 10,
+    "editor.minimap.maxColumn": 40,
+    "editor.minimap.showSlider": "always",
+    "editor.linkedEditing": true,
+    "editor.renderLineHighlight": "all",
+    "editor.snippetSuggestions": "bottom",
+    // VS Intellicode
+    "editor.suggestSelection": "first",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    "editor.tabSize": 2,
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": [
+                    "keyword.control.flow.ts",
+                    "keyword.control.flow.tsx",
+                    "keyword.control.export.ts"
+                ],
+                "settings": {
+                    "fontStyle": "italic"
+                }
+            },
+            {
+                "scope": "text.html.markdown.journal.task.open.bullet",
+                "settings": {
+                    "foreground": "#FFFF00"
+                }
+            },
+            {
+                "scope": "text.html.markdown.journal.task.open.marker",
+                "settings": {
+                    "foreground": "#FFFF00"
+                }
+            },
+            {
+                "scope": "text.html.markdown.journal.task.open.keyword",
+                "settings": {
+                    "fontStyle": "italic"
+                }
+            },
+            {
+                "scope": "text.html.markdown.journal.task.open.text",
+                "settings": {}
+            },
+            {
+                "scope": "text.html.markdown.journal.task.completed.keyword",
+                "settings": {
+                    "fontStyle": "italic"
+                }
+            },
+            {
+                "scope": "text.html.markdown.journal.task.completed.marker",
+                "settings": {
+                    "foreground": "#AAAAAA"
+                }
+            },
+            {
+                "scope": "text.html.markdown.journal.task.completed.text",
+                "settings": {
+                    "foreground": "#AAAAAA"
+                }
+            },
+            {
+                "scope": "text.html.markdown.journal.task.completed.bullet",
+                "settings": {
+                    "foreground": "#FFFF00"
+                }
+            },
+            {
+                "scope": "text.html.markdown.journal.memo.keyword",
+                "settings": {
+                    "fontStyle": "italic"
+                }
+            },
+            {
+                "scope": "text.html.markdown.journal.memo.bullet",
+                "settings": {
+                    "foreground": "#FFFF00"
+                }
+            },
+            {
+                "scope": "text.html.markdown.journal.scope",
+                "settings": {
+                    "foreground": "#FFFF00"
+                }
+            },
+            {
+                "scope": "text.html.markdown.journal.link.keyword",
+                "settings": {
+                    "fontStyle": "italic"
+                }
+            },
+            {
+                "scope": "text.html.markdown.journal.link.bullet",
+                "settings": {
+                    "foreground": "#FFFF00"
+                }
+            }
+        ]
+    },
+    "eslint.validate": [
+        "typescript",
+        "typescriptreact"
+    ],
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "files.watcherExclude": {
+        "**/node_modules/**": false
+    },
+    "gitHistory.showEditorTitleMenuBarIcons": false,
+    "gitlens.menus": false,
+    "javascript.preferences.quoteStyle": "single",
+    "javascript.referencesCodeLens.enabled": true,
+    "javascript.referencesCodeLens.showOnAllFunctions": true,
+    "javascript.suggest.completeFunctionCalls": true,
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "jestrunner.debugOptions": {
+        "skipFiles": [
+            "<node_internals>/**"
+        ],
+        "smartStep": true
+    },
+
+    // Git Decorators
+    "scm.diffDecorationsGutterPattern": {
+        "modified": false
+    },
+
+    "scssFormatter.singleQuote": true,
+    "terminal.integrated.fontFamily": "'JetBrainsMono Nerd Font', 'RobotoMono Nerd Font', Menlo, Monaco, 'Courier New', monospace",
+    "terminal.integrated.fontSize": 11,
+    "typescript.implementationsCodeLens.enabled": true,
+    "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+    "typescript.inlayHints.parameterNames.enabled": "literals",
+    "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+    "typescript.inlayHints.parameterTypes.enabled": true,
+    "typescript.inlayHints.variableTypes.enabled": true,
+    "typescript.preferences.quoteStyle": "single",
+    "typescript.referencesCodeLens.enabled": true,
+    "typescript.referencesCodeLens.showOnAllFunctions": true,
+    "typescript.suggest.autoImports": true,
+    "typescript.suggest.completeFunctionCalls": true,
+    "typescript.tsserver.pluginPaths": [
+        "typescript-plugin-css-modules"
+    ],
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "window.title": "${rootName}${separator}${activeEditorShort}",
+    "window.zoomLevel": -0.5,
+    "window.confirmBeforeClose": "keyboardOnly",
+    "workbench.colorCustomizations": {
+        "editorInlayHint.foreground": "#909090",
+        "editorInlayHint.background": "#2F2F2F",
+        "editorWhitespace.foreground": "#1e1e1e",
+        "inlineparameters.annotationBackground": "#2F2F2F",
+        "tab.activeBorderTop": "#007acc",
+        "tab.activeBackground": "#01395e",
+        "tab.unfocusedActiveBackground": "#002d4b",
+        "tab.unfocusedHoverBorder": "#007acc",
+        "tab.unfocusedActiveBorderTop": "#007acc",
+        "peekViewEditor.background": "#2F2F2F",
+        "editor.lineHighlightBorder": "#383B3D",
+        // "editorStickyScroll.background": "#383B3D"
+    },
+    "workbench.editor.historyBasedLanguageDetection": true,
+    "workbench.iconTheme": "vscode-icons",
+    "errorLens.exclude": [
+        "^Delete",
+        "^MD",
+        "^Expected 'this' to be used by class method",
+        // Formatting related
+        "^Expected indentation",
+        "^Trailing spaces not allowed",
+        "^Block must not be padded",
+        "^Missing trailing comma",
+        "^Missing semicolon",
+    ],
+    "deno.codeLens.references": true,
+    "deno.codeLens.referencesAllFunctions": true,
+    "deno.codeLens.implementations": true,
+    "journal.templates": [
+        {
+            "name": "entry",
+            "template": "# ${d:dddd, MMMM DD YYYY}\n\n## Standup\n\n\n\n## Tasks\n\n\n\n## Notes\n\n"
+        },
+    ],
+    "auto.languages": {
+        "javascript": {
+            "symbol": "$",
+            "stringWrapper": "`"
+        },
+        "javascriptreact": {
+            "symbol": "$",
+            "stringWrapper": "`"
+        },
+        "typescript": {
+            "symbol": "$",
+            "stringWrapper": "`"
+        },
+        "typescriptreact": {
+            "symbol": "$",
+            "stringWrapper": "`"
+        }
+    },
+    // Suppress trailing comma warnings in settings.json
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "settings.json"
+            ],
+            "schema": {
+                "allowTrailingCommas": true
+            }
+        }
+    ],
+    "peacock.favoriteColors": [
+        // Custom
+        {
+            "name": "Firebase Amber",
+            "value": "#FFA000"
+        },
+        {
+            "name": "Firebase Orange",
+            "value": "#F57C00"
+        },
+        {
+            "name": "Firebase Yellow",
+            "value": "#FFCA28"
+        },
+        // Standard
+        {
+            "name": "Angular Red",
+            "value": "#dd0531"
+        },
+        {
+            "name": "Azure Blue",
+            "value": "#007fff"
+        },
+        {
+            "name": "JavaScript Yellow",
+            "value": "#f9e64f"
+        },
+        {
+            "name": "Mandalorian Blue",
+            "value": "#1857a4"
+        },
+        {
+            "name": "Node Green",
+            "value": "#215732"
+        },
+        {
+            "name": "React Blue",
+            "value": "#61dafb"
+        },
+        {
+            "name": "Something Different",
+            "value": "#832561"
+        },
+        {
+            "name": "Svelte Orange",
+            "value": "#ff3d00"
+        },
+        {
+            "name": "Vue Green",
+            "value": "#42b883"
+        },
+        // VS Dark
+        {
+            "name": "VS Dark Gray 1",
+            "value": "#d4d4d4"
+        },
+        {
+            "name": "VS Dark Gray 2",
+            "value": "#808080"
+        },
+        {
+            "name": "VS Dark Gray 3",
+            "value": "#303030"
+        },
+        {
+            "name": "VS Dark Gray 4",
+            "value": "#282c34"
+        },
+        {
+            "name": "VS Dark Black",
+            "value": "#1e1e1e"
+        },
+        {
+            "name": "VS Dark Red",
+            "value": "#f44747"
+        },
+        {
+            "name": "VS Dark Rose",
+            "value": "#d16969"
+        },
+        {
+            "name": "VS Dark Peach",
+            "value": "#ce9178"
+        },
+        {
+            "name": "VS Dark Yellow",
+            "value": "#dcdcaa"
+        },
+        {
+            "name": "VS Dark Orange",
+            "value": "#d7ba7d"
+        },
+        {
+            "name": "VS Dark Light Green",
+            "value": "#b5cea8"
+        },
+        {
+            "name": "VS Dark Green",
+            "value": "#608b4e"
+        },
+        {
+            "name": "VS Dark Aqua",
+            "value": "#4ec9b0"
+        },
+        {
+            "name": "VS Dark Blue 1",
+            "value": "#9cdcfe"
+        },
+        {
+            "name": "VS Dark Blue 2",
+            "value": "#569cd6"
+        },
+        {
+            "name": "VS Dark Blue 3",
+            "value": "#007acc"
+        },
+        {
+            "name": "VS Dark Blue 4",
+            "value": "#264f78"
+        },
+        {
+            "name": "VS Dark Purple 1",
+            "value": "#c586c0"
+        },
+        {
+            "name": "VS Dark Purple 2",
+            "value": "#646695"
+        }
+    ],
+    "multiCommand.commands": {
+        "multiCommand.makeSpace": {
+            "label": "Make Space",
+            "sequence": [
+                "workbench.action.toggleActivityBarVisibility",
+                "workbench.action.toggleSidebarVisibility",
+            ]
+        },
+        "multiCommand.commentThenDuplicate": {
+            "label": "Comment Then Duplicate",
+            "sequence": [
+                "editor.action.commentLine",
+                "editor.action.copyLinesDownAction",
+                "editor.action.commentLine",
+            ]
+        },
+        "multiCommand.closeAllTabsExceptCurrent": {
+            "label": "Close All Tabs Except Current",
+            "sequence": [
+                "workbench.action.closeEditorsInOtherGroups",
+                "workbench.action.closeOtherEditors",
+                "workbench.files.action.collapseExplorerFolders",
+                "workbench.action.closePanel",
+            ]
+        },
+    },
+    "settings.cycle": [
+        {
+            "id": "screenshare",
+            "overrideWorkspaceSettings": false,
+            "values": [
+                {
+                    "window.zoomLevel": 1,
+                    "editor.minimap.enabled": false,
+                },
+                {
+                    "window.zoomLevel": -0.5,
+                    "editor.minimap.enabled": true,
+                }
+            ]
+        },
+        {
+            "id": "livestream",
+            "overrideWorkspaceSettings": false,
+            "values": [
+                {
+                    "editor.cursorBlinking": "solid",
+                    "scm.diffDecorations": "none",
+                    "window.zoomLevel": 1,
+                    "workbench.activityBar.visible": false,
+                    "workbench.statusBar.visible": false
+                },
+                // My Defaults
+                {
+                    "editor.cursorBlinking": "smooth",
+                    "editor.fontSize": 13,
+                    "scm.diffDecorations": "all",
+                    "terminal.integrated.fontSize": 11,
+                    "window.zoomLevel": -0.5,
+                    "workbench.activityBar.visible": true,
+                    "workbench.statusBar.visible": true
+                }
+            ]
+        }
+    ],
+    "settingsOnFire.toggle": {
+        "Screen Share Mode": {
+            "on": {
+                "_label": "Enable",
+                "window.zoomLevel": 1,
+                "editor.minimap.enabled": false,
+            },
+            "off": {
+                "_label": "Disable",
+                "window.zoomLevel": -0.5,
+                "editor.minimap.enabled": true,
+            }
+        },
+        "Internals / Artifacts": {
+            "on": {
+                "_label": "Hide",
+                "files.exclude": {
+                    "**/node_modules": true,
+                    "**/dist": true,
+                }
+            },
+            "off": {
+                "_label": "Show",
+                "files.exclude": {
+                    "**/node_modules": false,
+                    "**/dist": false,
+                }
+            }
+        }
+    },
+    "terminal.integrated.persistentSessionReviveProcess": "never",
+}

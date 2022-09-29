@@ -2,6 +2,9 @@
 	excludesfile = ~/.gitignore
 	editor = nvim
 	ignorecase = false
+[user]
+  email = richard.claydon@koho.ca
+  name = Richard Claydon
 [push]
   default = simple
 [color]

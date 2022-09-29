@@ -1,6 +1,7 @@
 - defaults:
     link:
       relink: true
+      create: true
 
 - clean: ['~']
 
@@ -16,6 +17,11 @@
     ~/.oh-my-zsh: config/zsh/ohmyzsh
     ~/.zshrc:
       path: config/zsh/zshrc
+      force: true
+
+    ~/Library/Application Support/Code/User:
+      glob: true
+      path: config/vscode/*.json
       force: true
 
 - create:
