@@ -157,7 +157,6 @@
     ],
     "explorer.confirmDelete": false,
     "explorer.confirmDragAndDrop": false,
-    "files.insertFinalNewline": true,
     "files.trimTrailingWhitespace": true,
     "files.watcherExclude": {
         "**/node_modules/**": false
@@ -492,4 +491,5 @@
         }
     },
     "terminal.integrated.persistentSessionReviveProcess": "never",
+    "files.insertFinalNewline": true,
 }
