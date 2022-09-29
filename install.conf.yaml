@@ -3,10 +3,10 @@
       relink: true
       create: true
 
-- clean: ['~']
+- clean: ["~"]
 
 - shell:
-  - [git submodule update --init --recursive, Installing submodules]
+    - [git submodule update --init --recursive, Installing submodules]
   -
     command: ./config/macos/setup-homebrew.sh
     description: Installing Homebrew and Essential Packages
@@ -26,4 +26,3 @@
 
 - create:
     - ~/.vim/undo-history
-
