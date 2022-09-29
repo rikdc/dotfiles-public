@@ -5,10 +5,14 @@
 - clean: ['~']
 
 - link:
-    ~/.gitconfig: "config/git"
+    ~/.gitconfig: "config/git/git"
 
 - create:
     - ~/.vim/undo-history
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
+  -
+    command: ./config/macos/setup-homebrew.sh
+    description: Installing Homebrew and Essential Packages
+    stdout: true
