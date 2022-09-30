@@ -1,0 +1,19 @@
+# IP addresses
+alias ip="curl -s http://checkip.dyndns.org/ | sed 's/[a-zA-Z<>/ :]//g'"
+alias localip="ipconfig getifaddr en0"
+alias ips="ifconfig -a | grep -o 'inet6\? \(addr:\)\?\s\?\(\(\([0-9]\+\.\)\{3\}[0-9]\+\)\|[a-fA-F0-9:]\+\)' | awk '{ sub(/inet6? (addr:)? ?/, \"\"); print }'"
+
+# Unix
+alias ll="ls -al"
+alias ln="ln -v"
+alias mkdir="mkdir -p"
+alias e="$EDITOR"
+alias v="$VISUAL"
+
+# Pretty print the path
+alias path='echo $PATH | tr -s ":" "\n"'
+
+# Include custom aliases
+if [[ -f ~/.aliases.local ]]; then
+  source ~/.aliases.local
+fi

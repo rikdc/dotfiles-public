@@ -6,10 +6,14 @@
 - clean: ["~"]
 
 - shell:
-    - [git submodule update --init --recursive, Installing submodules]
+  - [git submodule update --init --recursive, Installing submodules]
   -
     command: ./config/macos/setup-homebrew.sh
     description: Installing Homebrew and Essential Packages
+    stdout: true
+  -
+    command: ./config/macos/macos-defaults.sh
+    description: Setup MacOS Defaults
     stdout: true
 
 - link:
@@ -18,11 +22,13 @@
     ~/.zshrc:
       path: config/zsh/zshrc
       force: true
-
+    ~/.zprofile: config/zsh/zprofile
+    ~/.aliases: config/zsh/aliases
     ~/Library/Application Support/Code/User:
       glob: true
       path: config/vscode/*.json
       force: true
+
 
 - create:
     - ~/.vim/undo-history
