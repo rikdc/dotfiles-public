@@ -9,7 +9,7 @@
         "editor.defaultFormatter": "yzhang.markdown-all-in-one",
         "editor.codeActionsOnSave": {
             "source.fixAll.markdownlint": true
-        },
+        }
     },
     "[javascript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -17,15 +17,15 @@
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.codeActionsOnSave": {
-            "source.fixAll": true,
+            "source.fixAll": true
         },
-        "editor.formatOnSave": true,
+        "editor.formatOnSave": true
     },
     "[typescriptreact]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.codeActionsOnSave": {
-            "source.fixAll.eslint": true,
-        },
+            "source.fixAll.eslint": true
+        }
     },
     "auto-rename-tag.activationOnLanguage": [
         "javascriptreact"
@@ -40,17 +40,16 @@
     "editor.colorDecorators": false,
     "editor.cursorBlinking": "smooth",
     "editor.cursorStyle": "block",
-    "editor.cursorSurroundingLines": 5, // Trial
+    "editor.cursorSurroundingLines": 5,
     "editor.dragAndDrop": false,
     "editor.fontFamily": "'JetBrainsMono Nerd Font', 'RobotoMono Nerd Font', Menlo, Monaco, 'Courier New', monospace",
     "editor.fontSize": 13,
     "editor.formatOnPaste": true,
-    // Brackets/Guides
     "editor.bracketPairColorization.enabled": true,
     "editor.guides.indentation": true,
     "editor.guides.bracketPairs": true,
     "editor.guides.bracketPairsHorizontal": "active",
-    "editor.hover.above": false, // Trial
+    "editor.hover.above": false,
     "editor.inlayHints.fontSize": 10,
     "editor.minimap.maxColumn": 40,
     "editor.minimap.showSlider": "always",
@@ -226,7 +225,7 @@
         "^Trailing spaces not allowed",
         "^Block must not be padded",
         "^Missing trailing comma",
-        "^Missing semicolon",
+        "^Missing semicolon"
     ],
     "deno.codeLens.references": true,
     "deno.codeLens.referencesAllFunctions": true,
@@ -235,7 +234,7 @@
         {
             "name": "entry",
             "template": "# ${d:dddd, MMMM DD YYYY}\n\n## Standup\n\n\n\n## Tasks\n\n\n\n## Notes\n\n"
-        },
+        }
     ],
     "auto.languages": {
         "javascript": {
@@ -400,7 +399,7 @@
             "label": "Make Space",
             "sequence": [
                 "workbench.action.toggleActivityBarVisibility",
-                "workbench.action.toggleSidebarVisibility",
+                "workbench.action.toggleSidebarVisibility"
             ]
         },
         "multiCommand.commentThenDuplicate": {
@@ -408,7 +407,7 @@
             "sequence": [
                 "editor.action.commentLine",
                 "editor.action.copyLinesDownAction",
-                "editor.action.commentLine",
+                "editor.action.commentLine"
             ]
         },
         "multiCommand.closeAllTabsExceptCurrent": {
@@ -417,9 +416,9 @@
                 "workbench.action.closeEditorsInOtherGroups",
                 "workbench.action.closeOtherEditors",
                 "workbench.files.action.collapseExplorerFolders",
-                "workbench.action.closePanel",
+                "workbench.action.closePanel"
             ]
-        },
+        }
     },
     "settings.cycle": [
         {
@@ -428,7 +427,7 @@
             "values": [
                 {
                     "window.zoomLevel": 1,
-                    "editor.minimap.enabled": false,
+                    "editor.minimap.enabled": false
                 },
                 {
                     "window.zoomLevel": -0.5,
@@ -465,12 +464,12 @@
             "on": {
                 "_label": "Enable",
                 "window.zoomLevel": 1,
-                "editor.minimap.enabled": false,
+                "editor.minimap.enabled": false
             },
             "off": {
                 "_label": "Disable",
                 "window.zoomLevel": -0.5,
-                "editor.minimap.enabled": true,
+                "editor.minimap.enabled": true
             }
         },
         "Internals / Artifacts": {
@@ -492,4 +491,36 @@
     },
     "terminal.integrated.persistentSessionReviveProcess": "never",
     "files.insertFinalNewline": true,
+    
+    // Modern productivity settings
+    "editor.inlineSuggest.enabled": true,
+    "git.autofetch": true,
+    "editor.stickyScroll.enabled": true,
+    "editor.unicodeHighlight.nonBasicASCII": false,
+    "workbench.editor.enablePreview": false,
+    "workbench.editor.enablePreviewFromQuickOpen": false,
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 1000,
+    "search.useIgnoreFiles": true,
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/*.code-search": true,
+        "**/dist": true,
+        "**/build": true,
+        "**/.git": true
+    },
+    "editor.acceptSuggestionOnCommitCharacter": false,
+    "workbench.startupEditor": "none",
+    "git.confirmSync": false,
+    "git.enableSmartCommit": true,
+    "editor.quickSuggestions": {
+        "other": true,
+        "comments": false,
+        "strings": true
+    },
+    "editor.quickSuggestionsDelay": 10,
+    "workbench.editor.restoreViewState": true,
+    "git.openRepositoryInParentFolders": "always",
+    "security.workspace.trust.untrustedFiles": "open"
 }

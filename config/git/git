@@ -1,12 +1,16 @@
 [core]
-	excludesfile = ~/.gitignore
+	excludesfile = ~/.gitignore_global
 	editor = nvim
 	ignorecase = false
+	autocrlf = input
+	safecrlf = true
+	whitespace = trailing-space,space-before-tab
 [user]
   email = richard.claydon@koho.ca
   name = Richard Claydon
 [push]
   default = simple
+  autoSetupRemote = true
 [color]
   status = auto
   diff = auto
@@ -45,12 +49,33 @@
 	user = rikdc
 [diff]
   tool = nvimdiff
+  colorMoved = default
+  algorithm = patience
 [difftool "nvimdiff"]
 	cmd = nvim -d \"$LOCAL\" \"$REMOTE\"
 	path = 
 [mergetool "nvimdiff"]
 	cmd = nvim -d \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
+[merge]
+	tool = nvimdiff
+	conflictstyle = diff3
+	autoStash = true
+[rebase]
+	autoStash = true
+	autoSquash = true
+[pull]
+	rebase = true
+[rerere]
+	enabled = true
+[delta]
+	navigate = true    # use n and N to move between diff sections
+	light = false      # set to true if you're in a terminal w/ a light background color (e.g. the default macOS terminal)
+	side-by-side = true
+	line-numbers = true
+	syntax-theme = Dracula
+[interactive]
+	diffFilter = delta --color-only
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
