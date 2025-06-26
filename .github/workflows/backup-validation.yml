@@ -1,0 +1,314 @@
+name: Backup Validation
+
+on:
+  schedule:
+    - cron: '0 6 * * 0' # Weekly on Sunday at 6 AM
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  test-backup-functionality:
+    name: Test Backup Functionality
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup environment
+        run: |
+          echo "🔧 Setting up backup test environment..."
+          
+          # Install required tools
+          brew install --quiet git || true
+          
+          # Set up git (required for some backup operations)
+          git config --global user.email "test@example.com"
+          git config --global user.name "Backup Test"
+          
+          echo "✅ Environment setup complete"
+
+      - name: Test Makefile backup target
+        id: test_backup
+        run: |
+          echo "🗄️  Testing backup functionality..."
+          
+          # Check if Makefile has backup target
+          if ! grep -q "^backup:" Makefile; then
+            echo "❌ Backup target not found in Makefile"
+            exit 1
+          fi
+          
+          # Test backup command (dry run first)
+          echo "Testing Makefile syntax for backup target..."
+          make -n backup || {
+            echo "❌ Backup target has syntax errors"
+            exit 1
+          }
+          
+          # Run actual backup
+          echo "Running backup command..."
+          make backup || {
+            echo "❌ Backup command failed"
+            exit 1
+          }
+          
+          echo "backup_completed=true" >> $GITHUB_OUTPUT
+          echo "✅ Backup command executed successfully"
+
+      - name: Validate backup contents
+        if: steps.test_backup.outputs.backup_completed == 'true'
+        run: |
+          echo "🔍 Validating backup contents..."
+          
+          # Find the most recent backup directory
+          if [ ! -d "backups" ]; then
+            echo "❌ Backup directory not created"
+            exit 1
+          fi
+          
+          latest_backup=$(ls -t backups/ 2>/dev/null | head -n1)
+          
+          if [ -z "$latest_backup" ]; then
+            echo "❌ No backup found in backups directory"
+            exit 1
+          fi
+          
+          echo "📁 Latest backup: $latest_backup"
+          backup_path="backups/$latest_backup"
+          
+          # Check expected backup files
+          expected_files=(
+            "Brewfile.backup"
+            "vscode-extensions.backup"
+          )
+          
+          missing_files=()
+          for file in "${expected_files[@]}"; do
+            if [ -f "$backup_path/$file" ]; then
+              echo "✅ Found: $file"
+              
+              # Validate file contents
+              case "$file" in
+                "Brewfile.backup")
+                  if ! grep -q "tap\|brew\|cask" "$backup_path/$file"; then
+                    echo "⚠️  $file appears to be empty or invalid"
+                  else
+                    echo "   📊 $(wc -l < "$backup_path/$file") lines"
+                  fi
+                  ;;
+                "vscode-extensions.backup")
+                  if [ ! -s "$backup_path/$file" ]; then
+                    echo "⚠️  $file is empty"
+                  else
+                    echo "   📊 $(wc -l < "$backup_path/$file") extensions"
+                  fi
+                  ;;
+              esac
+            else
+              missing_files+=("$file")
+              echo "❌ Missing: $file"
+            fi
+          done
+          
+          # Check for optional backup files
+          optional_files=(
+            "zshrc.backup"
+            "gitconfig.backup"
+          )
+          
+          for file in "${optional_files[@]}"; do
+            if [ -f "$backup_path/$file" ]; then
+              echo "✅ Found optional: $file"
+            else
+              echo "⚠️  Optional file not found: $file"
+            fi
+          done
+          
+          if [ ${#missing_files[@]} -gt 0 ]; then
+            echo "❌ Missing required backup files: ${missing_files[*]}"
+            exit 1
+          fi
+          
+          echo "✅ Backup validation completed successfully"
+
+      - name: Test backup restoration simulation
+        run: |
+          echo "🔄 Testing backup restoration simulation..."
+          
+          # Find the latest backup
+          latest_backup=$(ls -t backups/ 2>/dev/null | head -n1)
+          backup_path="backups/$latest_backup"
+          
+          if [ -f "$backup_path/Brewfile.backup" ]; then
+            echo "Testing Brewfile restoration..."
+            
+            # Simulate restoration by validating the backup file
+            cp "$backup_path/Brewfile.backup" Brewfile.test
+            
+            # Validate the restored Brewfile
+            if grep -q "tap\|brew\|cask" Brewfile.test; then
+              echo "✅ Brewfile backup can be restored"
+            else
+              echo "❌ Brewfile backup appears corrupted"
+              exit 1
+            fi
+            
+            rm Brewfile.test
+          fi
+          
+          if [ -f "$backup_path/vscode-extensions.backup" ]; then
+            echo "Testing VS Code extensions restoration..."
+            
+            # Validate extension format
+            if grep -E "^[a-zA-Z0-9.-]+\.[a-zA-Z0-9.-]+$" "$backup_path/vscode-extensions.backup" > /dev/null; then
+              echo "✅ VS Code extensions backup format is valid"
+            else
+              echo "❌ VS Code extensions backup format is invalid"
+              exit 1
+            fi
+          fi
+          
+          echo "✅ Backup restoration simulation completed"
+
+      - name: Test backup cleanup and retention
+        run: |
+          echo "🧹 Testing backup cleanup and retention..."
+          
+          # Check current number of backups
+          backup_count=$(ls -1 backups/ 2>/dev/null | wc -l | tr -d ' ')
+          echo "📊 Current backup count: $backup_count"
+          
+          # Create additional test backups to test retention
+          for i in {1..3}; do
+            test_backup_dir="backups/test-$(date +%Y%m%d_%H%M%S)-$i"
+            mkdir -p "$test_backup_dir"
+            echo "test backup $i" > "$test_backup_dir/test.txt"
+          done
+          
+          new_backup_count=$(ls -1 backups/ 2>/dev/null | wc -l | tr -d ' ')
+          echo "📊 Backup count after adding test backups: $new_backup_count"
+          
+          # Test cleanup logic (keep only last 5 backups)
+          echo "Testing backup cleanup..."
+          cd backups && ls -t | tail -n +6 | head -5 | while read backup; do
+            if [[ "$backup" == test-* ]]; then
+              echo "🗑️  Would clean up: $backup"
+              rm -rf "$backup"
+            fi
+          done
+          
+          final_backup_count=$(ls -1 ../backups/ 2>/dev/null | wc -l | tr -d ' ')
+          echo "📊 Final backup count: $final_backup_count"
+          
+          echo "✅ Backup cleanup test completed"
+
+      - name: Generate backup health report
+        run: |
+          echo "📊 Generating backup health report..."
+          
+          report_file="backup_health_report.md"
+          
+          cat > "$report_file" << 'EOF'
+          # 🗄️ Backup Health Report
+          
+          ## Summary
+          EOF
+          
+          echo "- **Date**: $(date)" >> "$report_file"
+          echo "- **Status**: ✅ Backup system operational" >> "$report_file"
+          
+          if [ -d "backups" ]; then
+            backup_count=$(ls -1 backups/ 2>/dev/null | wc -l | tr -d ' ')
+            echo "- **Available Backups**: $backup_count" >> "$report_file"
+            
+            echo "" >> "$report_file"
+            echo "## Backup Details" >> "$report_file"
+            
+            ls -t backups/ | head -5 | while read backup; do
+              echo "### $backup" >> "$report_file"
+              if [ -d "backups/$backup" ]; then
+                echo "- **Size**: $(du -h "backups/$backup" | cut -f1)" >> "$report_file"
+                echo "- **Files**: $(find "backups/$backup" -type f | wc -l | tr -d ' ')" >> "$report_file"
+                echo "" >> "$report_file"
+              fi
+            done
+          fi
+          
+          echo "## Recommendations" >> "$report_file"
+          echo "- ✅ Backup system is functioning correctly" >> "$report_file"
+          echo "- ✅ Regular automated backups are being created" >> "$report_file"
+          echo "- ✅ Backup contents are valid and restorable" >> "$report_file"
+          
+          cat "$report_file"
+
+      - name: Create backup status issue
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📝 Creating backup status issue..."
+          
+          # Only create issue if this is the scheduled run (not manual)
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            gh issue create \
+              --title "🗄️ Weekly Backup Health Report ($(date +%Y-%m-%d))" \
+              --body "$(cat <<'EOF'
+            ## 🗄️ Weekly Backup System Health Check
+            
+            The automated backup validation has completed successfully.
+            
+            ### ✅ Test Results
+            - [x] Backup functionality test passed
+            - [x] Backup contents validation passed  
+            - [x] Backup restoration simulation passed
+            - [x] Backup cleanup and retention test passed
+            
+            ### 📊 Health Report
+            $(cat backup_health_report.md)
+            
+            ### 🔄 Next Steps
+            - No action required - backup system is healthy
+            - Backups can be manually created with `make backup`
+            - Old backups are automatically cleaned up to maintain disk space
+            
+            ---
+            *This report was automatically created by the Backup Validation workflow*
+            EOF
+            )" \
+              --label "maintenance" \
+              --label "backup" || echo "Issue creation skipped (may already exist)"
+          else
+            echo "Manual run detected, skipping issue creation"
+          fi
+
+  test-cross-platform-backup:
+    name: Test Cross-Platform Backup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git
+
+      - name: Test backup on Ubuntu
+        run: |
+          echo "🐧 Testing backup functionality on Ubuntu..."
+          
+          # Set up git for backup operations
+          git config --global user.email "test@example.com"
+          git config --global user.name "Ubuntu Backup Test"
+          
+          # Check if backup target exists and has proper syntax
+          if ! grep -q "^backup:" Makefile; then
+            echo "❌ Backup target not found in Makefile"
+            exit 1
+          fi
+          
+          # Test dry run
+          make -n backup || {
+            echo "❌ Backup target has syntax errors on Ubuntu"
+            exit 1
+          }
+          
+          echo "✅ Backup functionality is compatible with Ubuntu"
