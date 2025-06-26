@@ -1,0 +1,274 @@
+name: Package Updates
+
+on:
+  schedule:
+    - cron: '0 10 * * 1' # Weekly on Monday at 10 AM
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  update-homebrew-packages:
+    name: Update Homebrew Packages
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Homebrew
+        uses: Homebrew/actions/setup-homebrew@master
+
+      - name: Update Homebrew
+        run: |
+          echo "🍺 Updating Homebrew..."
+          brew update
+          echo "✅ Homebrew updated"
+
+      - name: Check for outdated packages
+        id: outdated
+        run: |
+          echo "🔍 Checking for outdated packages..."
+          cd config/macos
+          
+          # Check if any packages in Brewfile are outdated
+          outdated_output=$(brew bundle check --verbose 2>&1 || true)
+          echo "$outdated_output"
+          
+          # Check for outdated formulae and casks
+          outdated_formulae=$(brew outdated --formula | wc -l | tr -d ' ')
+          outdated_casks=$(brew outdated --cask | wc -l | tr -d ' ')
+          
+          echo "outdated_formulae=$outdated_formulae" >> $GITHUB_OUTPUT
+          echo "outdated_casks=$outdated_casks" >> $GITHUB_OUTPUT
+          
+          if [ "$outdated_formulae" -gt 0 ] || [ "$outdated_casks" -gt 0 ]; then
+            echo "has_updates=true" >> $GITHUB_OUTPUT
+            echo "📦 Found $outdated_formulae outdated formulae and $outdated_casks outdated casks"
+          else
+            echo "has_updates=false" >> $GITHUB_OUTPUT
+            echo "✅ All packages are up to date"
+          fi
+
+      - name: List outdated packages
+        if: steps.outdated.outputs.has_updates == 'true'
+        run: |
+          echo "📋 Listing outdated packages..."
+          
+          echo "## Outdated Formulae:" > outdated_report.md
+          if [ "${{ steps.outdated.outputs.outdated_formulae }}" -gt 0 ]; then
+            brew outdated --formula --verbose >> outdated_report.md
+          else
+            echo "None" >> outdated_report.md
+          fi
+          
+          echo "" >> outdated_report.md
+          echo "## Outdated Casks:" >> outdated_report.md
+          if [ "${{ steps.outdated.outputs.outdated_casks }}" -gt 0 ]; then
+            brew outdated --cask --verbose >> outdated_report.md
+          else
+            echo "None" >> outdated_report.md
+          fi
+          
+          echo "" >> outdated_report.md
+          echo "## Security Advisories:" >> outdated_report.md
+          brew audit --strict --online --formula $(brew outdated --formula --quiet) 2>&1 | grep -i "vulnerabilit\|security\|cve" >> outdated_report.md || echo "No security advisories found" >> outdated_report.md
+          
+          cat outdated_report.md
+
+      - name: Generate updated Brewfile
+        if: steps.outdated.outputs.has_updates == 'true'
+        id: update_brewfile
+        run: |
+          echo "🔄 Generating updated Brewfile..."
+          cd config/macos
+          
+          # Backup current Brewfile
+          cp Brewfile Brewfile.backup
+          
+          # Generate new Brewfile with latest versions
+          brew bundle dump --force --file=Brewfile.new
+          
+          # Compare files to see what changed
+          if cmp -s Brewfile Brewfile.new; then
+            echo "changes_detected=false" >> $GITHUB_OUTPUT
+            echo "No changes detected in Brewfile"
+          else
+            echo "changes_detected=true" >> $GITHUB_OUTPUT
+            echo "📝 Changes detected in Brewfile:"
+            diff Brewfile Brewfile.new || true
+          fi
+
+      - name: Create update branch and PR
+        if: steps.outdated.outputs.has_updates == 'true' && steps.update_brewfile.outputs.changes_detected == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "🔀 Creating update branch and PR..."
+          
+          # Configure git
+          git config --local user.email "richard.claydon@koho.ca"
+          git config --local user.name "Richard Claydon"
+          
+          # Create branch name with date
+          branch_name="update-homebrew-packages-$(date +%Y%m%d)"
+          git checkout -b "$branch_name"
+          
+          # Replace old Brewfile with new one
+          cd config/macos
+          mv Brewfile.new Brewfile
+          rm -f Brewfile.backup
+          
+          # Add and commit changes
+          git add Brewfile
+          git commit -m "Update Homebrew packages
+
+          Updated packages based on weekly check:
+          - ${{ steps.outdated.outputs.outdated_formulae }} outdated formulae
+          - ${{ steps.outdated.outputs.outdated_casks }} outdated casks
+          
+          This is an automated update. Please review changes before merging."
+          
+          # Push branch
+          git push origin "$branch_name"
+          
+          # Create PR using GitHub CLI
+          gh pr create \
+            --title "🍺 Update Homebrew Packages ($(date +%Y-%m-%d))" \
+            --body "$(cat <<'EOF'
+          ## 📦 Automated Homebrew Package Updates
+          
+          This PR contains automated updates for outdated Homebrew packages.
+          
+          ### 📊 Update Summary
+          - **Outdated Formulae**: ${{ steps.outdated.outputs.outdated_formulae }}
+          - **Outdated Casks**: ${{ steps.outdated.outputs.outdated_casks }}
+          
+          ### 📋 Outdated Packages Report
+          $(cat ~/outdated_report.md)
+          
+          ### ✅ Actions Required
+          - [ ] Review the updated packages
+          - [ ] Test locally if needed: `brew bundle install --file=config/macos/Brewfile`
+          - [ ] Merge if all looks good
+          
+          ### 🔄 Next Steps After Merge
+          - Run `make brew` to update your local Brewfile
+          - Run `brew bundle install` to install any new packages
+          
+          ---
+          *This PR was automatically created by the Package Updates workflow*
+          EOF
+          )" \
+            --base main \
+            --head "$branch_name" \
+            --label "automation" \
+            --label "homebrew"
+
+      - name: Create issue if no PR needed but updates available
+        if: steps.outdated.outputs.has_updates == 'true' && steps.update_brewfile.outputs.changes_detected == 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📝 Creating informational issue..."
+          
+          gh issue create \
+            --title "📦 Homebrew Package Updates Available ($(date +%Y-%m-%d))" \
+            --body "$(cat <<'EOF'
+          ## 📦 Package Updates Available
+          
+          The weekly package check found outdated packages, but they don't affect the Brewfile:
+          
+          ### 📊 Summary
+          - **Outdated Formulae**: ${{ steps.outdated.outputs.outdated_formulae }}
+          - **Outdated Casks**: ${{ steps.outdated.outputs.outdated_casks }}
+          
+          ### 📋 Details
+          $(cat ~/outdated_report.md)
+          
+          ### 🔄 Manual Action
+          You may want to run `brew upgrade` locally to update these packages.
+          
+          ---
+          *This issue was automatically created by the Package Updates workflow*
+          EOF
+          )" \
+            --label "maintenance" \
+            --label "homebrew"
+
+  update-vscode-extensions:
+    name: Check VS Code Extensions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      - name: Install VS Code CLI
+        run: |
+          echo "📦 Installing VS Code CLI..."
+          curl -Lk 'https://code.visualstudio.com/sha/download?build=stable&os=cli-alpine-x64' \
+            --output vscode_cli.tar.gz
+          tar -xf vscode_cli.tar.gz
+          chmod +x code
+
+      - name: Check extension updates
+        id: check_extensions
+        run: |
+          echo "🔍 Checking VS Code extension updates..."
+          
+          if [ ! -f "config/vscode/extensions.txt" ]; then
+            echo "❌ extensions.txt not found"
+            exit 1
+          fi
+          
+          outdated_extensions=""
+          total_extensions=$(wc -l < config/vscode/extensions.txt)
+          
+          echo "📊 Checking $total_extensions extensions..."
+          
+          # Note: In CI we can't actually check for updates without installing extensions
+          # So we'll create a report about the extensions list instead
+          echo "📋 Current extensions in dotfiles:"
+          cat config/vscode/extensions.txt
+          
+          echo "extensions_count=$total_extensions" >> $GITHUB_OUTPUT
+          echo "⚠️  Extension update checking requires VS Code installation with extensions"
+          echo "Consider running 'make vscode-save' locally to update extensions.txt"
+
+      - name: Create extension report issue
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "📝 Creating VS Code extensions report..."
+          
+          gh issue create \
+            --title "📦 VS Code Extensions Report ($(date +%Y-%m-%d))" \
+            --body "$(cat <<'EOF'
+          ## 📦 VS Code Extensions Report
+          
+          Weekly check of VS Code extensions configuration.
+          
+          ### 📊 Summary
+          - **Total Extensions**: ${{ steps.check_extensions.outputs.extensions_count }}
+          
+          ### 📋 Current Extensions
+          ```
+          $(cat config/vscode/extensions.txt)
+          ```
+          
+          ### 🔄 Manual Actions
+          To update your extensions list:
+          1. Install/uninstall extensions in VS Code as needed
+          2. Run `make vscode-save` to update extensions.txt
+          3. Commit the updated extensions.txt file
+          
+          ---
+          *This report was automatically created by the Package Updates workflow*
+          EOF
+          )" \
+            --label "maintenance" \
+            --label "vscode" || echo "Issue might already exist, skipping..."
