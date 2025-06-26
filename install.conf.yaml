@@ -18,6 +18,8 @@
 
 - link:
     ~/.gitconfig: config/git/git
+    ~/.gitignore_global: config/git/gitignore_global
+    ~/.config/starship.toml: config/starship.toml
     ~/.oh-my-zsh: config/zsh/ohmyzsh
     ~/.zshrc:
       path: config/zsh/zshrc
@@ -32,3 +34,4 @@
 
 - create:
     - ~/.vim/undo-history
+    - ~/.config

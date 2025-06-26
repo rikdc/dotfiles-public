@@ -1,0 +1,252 @@
+# Starship Configuration
+# Modern prompt configuration for development workflow
+
+# Timeout for commands (1 second)
+command_timeout = 1000
+
+# Format configuration
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$git_metrics\
+$nodejs\
+$python\
+$golang\
+$rust\
+$java\
+$terraform\
+$docker_context\
+$kubernetes\
+$aws\
+$package\
+$memory_usage\
+$cmd_duration\
+$line_break\
+$battery\
+$time\
+$status\
+$character"""
+
+# Right prompt format
+right_format = """$all"""
+
+# Character configuration
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vicmd_symbol = "[❮](bold yellow)"
+
+# Directory configuration
+[directory]
+style = "bold cyan"
+read_only = " 🔒"
+truncation_length = 3
+truncate_to_repo = true
+home_symbol = "~"
+
+# Git branch
+[git_branch]
+symbol = "🌱 "
+style = "bold purple"
+truncation_length = 20
+truncation_symbol = "…"
+
+# Git status
+[git_status]
+style = "bold yellow"
+ahead = "⇡${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+behind = "⇣${count}"
+conflicted = "🏳"
+untracked = "🤷"
+stashed = "📦"
+modified = "📝"
+staged = "➕"
+renamed = "👅"
+deleted = "🗑"
+
+# Git metrics
+[git_metrics]
+added_style = "bold blue"
+deleted_style = "bold red"
+only_nonzero_diffs = true
+format = "([+$added]($added_style) )([-$deleted]($deleted_style) )"
+disabled = false
+
+# Command duration
+[cmd_duration]
+min_time = 2_000
+style = "bold yellow"
+format = "took [$duration]($style)"
+
+# Status
+[status]
+style = "bold red"
+disabled = false
+map_symbol = true
+
+# Battery
+[battery]
+full_symbol = "🔋 "
+charging_symbol = "⚡️ "
+discharging_symbol = "💀 "
+unknown_symbol = "❓ "
+empty_symbol = "💩 "
+
+[[battery.display]]
+threshold = 15
+style = "bold red"
+
+[[battery.display]]
+threshold = 50
+style = "bold yellow"
+
+[[battery.display]]
+threshold = 80
+style = "bold green"
+
+# Time
+[time]
+disabled = false
+format = '🕙[\[ $time \]]($style) '
+time_format = "%T"
+style = "bold white"
+
+# Memory usage
+[memory_usage]
+disabled = false
+threshold = 70
+symbol = "🐏"
+style = "bold dimmed green"
+format = "via $symbol [${ram_pct}]($style)"
+
+# Language configurations
+[nodejs]
+symbol = "⬢ "
+style = "bold green"
+detect_extensions = ["js", "mjs", "cjs", "ts", "tsx"]
+detect_files = ["package.json", ".node-version", ".nvmrc"]
+detect_folders = ["node_modules"]
+
+[python]
+symbol = "🐍 "
+style = "bold yellow"
+pyenv_version_name = true
+format = 'via [${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+
+[golang]
+symbol = "🐹 "
+style = "bold cyan"
+format = "via [$symbol($version )]($style)"
+
+[rust]
+symbol = "🦀 "
+style = "bold red"
+
+[java]
+symbol = "☕ "
+style = "red dimmed"
+
+[terraform]
+symbol = "💠"
+style = "bold 105"
+format = "via [$symbol$workspace]($style) "
+
+[docker_context]
+symbol = "🐳 "
+style = "blue bold"
+format = "via [$symbol$context]($style) "
+only_with_files = true
+detect_files = ["docker-compose.yml", "docker-compose.yaml", "Dockerfile"]
+detect_folders = []
+
+[kubernetes]
+symbol = "☸ "
+style = "cyan bold"
+format = 'on [$symbol$context( \($namespace\))]($style) '
+disabled = false
+detect_files = ["k8s"]
+detect_extensions = ["yaml", "yml"]
+contexts = [
+  { context_pattern = "dev.local.cluster.k8s", style = "green", symbol = "💔 " },
+]
+
+[aws]
+symbol = "☁️  "
+style = "bold blue"
+format = 'on [$symbol($profile )(\($region\) )(\[$duration\])]($style)'
+
+[package]
+symbol = "📦 "
+style = "bold 208"
+format = "is [$symbol$version]($style) "
+
+# Additional languages
+[c]
+symbol = "C "
+style = "149 bold"
+format = "via [$symbol($version(-$name) )]($style)"
+
+[cmake]
+symbol = "△ "
+style = "bold blue"
+format = "via [$symbol($version )]($style)"
+
+[crystal]
+symbol = "🔮 "
+style = "bold red"
+format = "via [$symbol($version )]($style)"
+
+[dart]
+symbol = "🎯 "
+style = "bold blue"
+format = "via [$symbol($version )]($style)"
+
+[deno]
+symbol = "🦕 "
+style = "green bold"
+format = "via [$symbol($version )]($style)"
+
+[dotnet]
+symbol = ".NET "
+style = "blue bold"
+format = "via [$symbol($version )(🎯 $tfm )]($style)"
+
+[elixir]
+symbol = "💧 "
+style = "bold purple"
+format = 'via [$symbol($version \(OTP $otp_version\) )]($style)'
+
+[elm]
+symbol = "🌳 "
+style = "cyan bold"
+format = "via [$symbol($version )]($style)"
+
+[erlang]
+symbol = " "
+style = "bold red"
+format = "via [$symbol($version )]($style)"
+
+[php]
+symbol = "🐘 "
+style = "147 bold"
+format = "via [$symbol($version )]($style)"
+
+[ruby]
+symbol = "💎 "
+style = "bold red"
+format = "via [$symbol($version )]($style)"
+
+[scala]
+symbol = "🆂 "
+style = "red bold"
+format = "via [$symbol($version )]($style)"
+
+[swift]
+symbol = "🐦 "
+style = "bold 202"
+format = "via [$symbol($version )]($style)"
