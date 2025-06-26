@@ -1,0 +1,211 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '0 2 * * 1' # Weekly on Monday at 2 AM
+
+jobs:
+  secret-detection:
+    name: Secret Detection
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: TruffleHog Secret Scanning
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          head: HEAD
+          extra_args: --debug --only-verified
+
+  credential-scan:
+    name: Credential and Sensitive Data Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install ripgrep
+        run: |
+          curl -LO https://github.com/BurntSushi/ripgrep/releases/download/13.0.0/ripgrep_13.0.0_amd64.deb
+          sudo dpkg -i ripgrep_13.0.0_amd64.deb
+
+      - name: Scan for AWS credentials and sensitive patterns
+        run: |
+          echo "🔍 Scanning for sensitive data patterns..."
+          
+          # AWS Access Keys
+          if rg -i "AKIA[0-9A-Z]{16}" --type-not=md .; then
+            echo "❌ Found AWS Access Key patterns"
+            exit 1
+          fi
+          
+          # AWS Secret Keys  
+          if rg -i "[0-9a-zA-Z/+]{40}" --type-not=md . | grep -v "github.com" | grep -v "example" | head -5; then
+            echo "⚠️  Found potential AWS Secret Key patterns (review manually)"
+          fi
+          
+          # Private Keys
+          if rg -i "BEGIN [A-Z]+ PRIVATE KEY" --type-not=md .; then
+            echo "❌ Found private key patterns"
+            exit 1
+          fi
+          
+          # Database URLs
+          if rg -i "postgresql://|mysql://|mongodb://" --type-not=md . | grep -v "example"; then
+            echo "❌ Found database connection strings"
+            exit 1
+          fi
+          
+          # API Keys and Tokens
+          if rg -i "(api_key|apikey|access_token|auth_token|secret_key).*[=:].*['\"][a-zA-Z0-9]{20,}['\"]" --type-not=md .; then
+            echo "❌ Found potential API keys or tokens"
+            exit 1
+          fi
+          
+          # Email addresses (in config files - may indicate personal info leakage)
+          email_count=$(rg -i "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" config/ | wc -l)
+          if [ "$email_count" -gt 5 ]; then
+            echo "⚠️  Found $email_count email addresses in config files"
+            rg -i "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" config/ | head -10
+          fi
+          
+          echo "✅ Secret scanning completed"
+
+  file-security-scan:
+    name: File Security Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check file permissions and security
+        run: |
+          echo "🔍 Analyzing file security..."
+          
+          # Check for files with dangerous permissions
+          find . -type f -perm -002 -not -path "./.git/*" | while read -r file; do
+            echo "⚠️  World-writable file found: $file"
+          done
+          
+          # Check for executable scripts without proper shebang
+          find . -name "*.sh" -not -path "./.git/*" | while read -r file; do
+            if [ -x "$file" ] && ! head -1 "$file" | grep -q "^#!"; then
+              echo "⚠️  Executable script without shebang: $file"
+            fi
+          done
+          
+          # Check for potentially dangerous file extensions in config
+          dangerous_files=$(find config/ -type f \( -name "*.exe" -o -name "*.bat" -o -name "*.cmd" -o -name "*.scr" \) 2>/dev/null | wc -l)
+          if [ "$dangerous_files" -gt 0 ]; then
+            echo "❌ Found potentially dangerous executable files in config/"
+            find config/ -type f \( -name "*.exe" -o -name "*.bat" -o -name "*.cmd" -o -name "*.scr" \)
+            exit 1
+          fi
+          
+          # Check for large binary files that might contain sensitive data
+          find . -type f -size +1M -not -path "./.git/*" -not -name "*.md" | while read -r file; do
+            if file "$file" | grep -q "binary"; then
+              echo "⚠️  Large binary file found: $file ($(du -h "$file" | cut -f1))"
+            fi
+          done
+          
+          echo "✅ File security analysis completed"
+
+  dotfiles-security-check:
+    name: Dotfiles-Specific Security
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Analyze dotfiles security patterns
+        run: |
+          echo "🔍 Checking dotfiles-specific security patterns..."
+          
+          # Check for hardcoded paths that might leak username/system info
+          if grep -r "/Users/[^/]*/" config/ | grep -v "example" | grep -v "template"; then
+            echo "⚠️  Found hardcoded user paths that might leak personal info"
+          fi
+          
+          # Check for WiFi passwords or network credentials
+          if grep -ri "wifi\|ssid\|wpa\|password.*network" config/ | grep -v "example"; then
+            echo "❌ Found potential WiFi/network credentials"
+            exit 1
+          fi
+          
+          # Check for Homebrew tokens or GitHub tokens in git config
+          if grep -ri "ghp_\|github_token\|homebrew.*token" config/; then
+            echo "❌ Found potential GitHub or Homebrew tokens"
+            exit 1
+          fi
+          
+          # Check VS Code settings for potential sensitive extensions or settings
+          if [ -f "config/vscode/settings.json" ]; then
+            if grep -i "token\|key\|secret\|password" config/vscode/settings.json | grep -v "example"; then
+              echo "⚠️  Found potential sensitive data in VS Code settings"
+              grep -i "token\|key\|secret\|password" config/vscode/settings.json | head -5
+            fi
+          fi
+          
+          # Check for terminal/shell history files that shouldn't be committed
+          if find . -name ".bash_history" -o -name ".zsh_history" -o -name ".history" | grep -v ".git"; then
+            echo "❌ Found shell history files that shouldn't be committed"
+            exit 1
+          fi
+          
+          # Check aliases for potential security issues (commands that might expose data)
+          if [ -f "config/zsh/aliases" ]; then
+            if grep -i "curl.*api\|wget.*token\|echo.*password" config/zsh/aliases; then
+              echo "⚠️  Found potentially insecure alias commands"
+            fi
+          fi
+          
+          echo "✅ Dotfiles security check completed"
+
+  aws-config-security:
+    name: AWS Configuration Security
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check AWS-specific security patterns
+        run: |
+          echo "🔍 Checking AWS configuration security..."
+          
+          # Look for AWS profiles that might contain sensitive info
+          if grep -ri "aws_access_key_id\|aws_secret_access_key" . --exclude-dir=.git; then
+            echo "❌ Found AWS credentials in files"
+            exit 1
+          fi
+          
+          # Check for hardcoded AWS regions that might leak infrastructure info
+          aws_regions=$(grep -ri "us-east-1\|us-west-2\|eu-west-1" config/ | grep -v "example" | wc -l)
+          if [ "$aws_regions" -gt 5 ]; then
+            echo "⚠️  Found multiple AWS region references ($aws_regions instances)"
+            echo "Consider parameterizing AWS regions instead of hardcoding"
+          fi
+          
+          # Check for Bedrock model ARNs that might leak account info
+          if grep -ri "arn:aws:bedrock" . --exclude-dir=.git; then
+            echo "⚠️  Found Bedrock ARNs - ensure they don't leak account information"
+            grep -ri "arn:aws:bedrock" . --exclude-dir=.git
+          fi
+          
+          # Check aliases for AWS CLI commands that might expose sensitive data
+          if [ -f "config/zsh/aliases" ]; then
+            if grep -i "aws.*s3.*cp\|aws.*secrets\|aws.*ssm.*get" config/zsh/aliases; then
+              echo "⚠️  Found AWS CLI aliases that might handle sensitive data"
+            fi
+          fi
+          
+          echo "✅ AWS configuration security check completed"
