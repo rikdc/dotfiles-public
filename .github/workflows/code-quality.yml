@@ -1,0 +1,146 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  shellcheck:
+    name: Shell Script Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run ShellCheck
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: './config'
+          format: gcc
+          severity: warning
+        env:
+          SHELLCHECK_OPTS: -e SC1091 -e SC2034 -e SC2155
+
+  validate-configs:
+    name: Configuration File Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Validate JSON files
+        run: |
+          echo "🔍 Validating JSON files..."
+          find . -name "*.json" -not -path "./node_modules/*" -not -path "./.git/*" | while read -r file; do
+            echo "Validating $file"
+            python -m json.tool "$file" > /dev/null || {
+              echo "❌ JSON validation failed for $file"
+              exit 1
+            }
+          done
+          echo "✅ All JSON files are valid"
+
+      - name: Install TOML validator
+        run: |
+          curl -fsSL https://github.com/tamasfe/taplo/releases/latest/download/taplo-linux-x86_64.gz \
+            | gunzip > taplo && chmod +x taplo
+
+      - name: Validate TOML files
+        run: |
+          echo "🔍 Validating TOML files..."
+          find . -name "*.toml" -not -path "./.git/*" | while read -r file; do
+            echo "Validating $file"
+            ./taplo format --check --diff "$file" || {
+              echo "❌ TOML validation failed for $file"
+              exit 1
+            }
+          done
+          echo "✅ All TOML files are valid"
+
+      - name: Validate YAML files
+        run: |
+          echo "🔍 Validating YAML files..."
+          python -c "
+          import yaml
+          import sys
+          import glob
+          
+          yaml_files = glob.glob('**/*.yml', recursive=True) + glob.glob('**/*.yaml', recursive=True)
+          yaml_files = [f for f in yaml_files if not f.startswith('.git/')]
+          
+          for file in yaml_files:
+              print(f'Validating {file}')
+              try:
+                  with open(file, 'r') as f:
+                      yaml.safe_load(f)
+              except Exception as e:
+                  print(f'❌ YAML validation failed for {file}: {e}')
+                  sys.exit(1)
+          
+          print('✅ All YAML files are valid')
+          "
+
+  validate-shell-syntax:
+    name: Shell Syntax Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Zsh
+        run: sudo apt-get update && sudo apt-get install -y zsh
+
+      - name: Validate shell script syntax
+        run: |
+          echo "🔍 Validating shell script syntax..."
+          
+          # Test bash scripts
+          find . -name "*.sh" -not -path "./.git/*" | while read -r file; do
+            echo "Validating bash syntax: $file"
+            bash -n "$file" || {
+              echo "❌ Bash syntax check failed for $file"
+              exit 1
+            }
+          done
+          
+          # Test zsh config files
+          if [ -f "config/zsh/zshrc" ]; then
+            echo "Validating zsh syntax: config/zsh/zshrc"
+            zsh -n config/zsh/zshrc || {
+              echo "❌ Zsh syntax check failed for config/zsh/zshrc"
+              exit 1
+            }
+          fi
+          
+          if [ -f "config/zsh/aliases" ]; then
+            echo "Validating zsh syntax: config/zsh/aliases"
+            zsh -n config/zsh/aliases || {
+              echo "❌ Zsh syntax check failed for config/zsh/aliases"
+              exit 1
+            }
+          fi
+          
+          echo "✅ All shell scripts have valid syntax"
+
+  validate-makefile:
+    name: Makefile Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate Makefile syntax
+        run: |
+          echo "🔍 Validating Makefile syntax..."
+          make -n --dry-run || {
+            echo "❌ Makefile validation failed"
+            exit 1
+          }
+          echo "✅ Makefile syntax is valid"
