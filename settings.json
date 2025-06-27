@@ -1,0 +1,50 @@
+{
+  "phpcs.executablePath": "/Users/rdchome/.composer/vendor/bin/phpcs",
+  "explorer.confirmDelete": false,
+  "[php]": {
+    "editor.defaultFormatter": "kokororin.vscode-phpfmt"
+  },
+  "phpfmt.cakephp": true,
+  "workbench.startupEditor": "newUntitledFile",
+  "terminal.integrated.shell.osx": "/bin/zsh",
+  "simple-php-cs-fixer.save": true,
+  "advancedNewFile.exclude": {
+    "node_modules": true,
+    "node_modules_electron": true,
+    "dev": true,
+    "dist": true
+  },
+  "advancedNewFile.showInformationMessages": true,
+  "advancedNewFile.convenienceOptions": ["last", "current", "root"],
+  "workbench.iconTheme": "vscode-icons",
+  "workbench.editor.showTabs": false,
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "explorer.confirmDragAndDrop": false,
+  "window.zoomLevel": -1,
+  "javascript.format.enable": false,
+  "editor.formatOnSave": true,
+  "vetur.format.defaultFormatter.js": "prettier-eslint",
+  "cmake.configureOnOpen": true,
+  "arduino.additionalUrls": [
+    "https://dl.espressif.com/dl/package_esp32_index.json",
+    "http://arduino.esp8266.com/stable/package_esp8266com_index.json"
+  ],
+  "workbench.editorAssociations": {
+    "*.ipynb": "jupyter-notebook"
+  },
+  "vsicons.dontShowNewVersionMessage": true,
+  "git.confirmSync": false,
+  "C_Cpp.updateChannel": "Insiders",
+  "idf.espIdfPath": "/Users/rdchome/esp/esp-idf",
+  "idf.pythonBinPath": "/Users/rdchome/.espressif/python_env/idf4.2_py2.7_env/bin/python",
+  "idf.toolsPath": "/Users/rdchome/.espressif",
+  "idf.customExtraPaths": "/Users/rdchome/.espressif/tools/xtensa-esp32-elf/esp-2020r3-8.4.0/xtensa-esp32-elf/bin:/Users/rdchome/.espressif/tools/xtensa-esp32s2-elf/esp-2020r3-8.4.0/xtensa-esp32s2-elf/bin:/Users/rdchome/.espressif/tools/esp32ulp-elf/2.28.51-esp-20191205/esp32ulp-elf-binutils/bin:/Users/rdchome/.espressif/tools/esp32s2ulp-elf/2.28.51-esp-20191205/esp32s2ulp-elf-binutils/bin:/Users/rdchome/.espressif/tools/openocd-esp32/v0.10.0-esp32-20200709/openocd-esp32/bin",
+  "idf.customExtraVars": "{\"OPENOCD_SCRIPTS\":\"/Users/rdchome/.espressif/tools/openocd-esp32/v0.10.0-esp32-20200709/openocd-esp32/share/openocd/scripts\"}",
+  "idf.gitPath": "git",
+  "idf.flashType": "JTAG",
+  "editor.suggestSelection": "first",
+  "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+  "go.toolsManagement.autoUpdate": true
+}
