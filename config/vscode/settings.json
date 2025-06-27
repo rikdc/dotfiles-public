@@ -510,18 +510,7 @@
     "chatgpt.gpt3.apiBaseUrl": "http://192.168.88.29:11434/v1/",
     "chatgpt.gpt3.customModel": "qwen2.5-coder",
     "chatgpt.gpt3.model": "custom",
-    "sqltools.connections": [
-        {
-            "previewLimit": 50,
-            "server": "192.168.88.30",
-            "port": 5432,
-            "driver": "PostgreSQL",
-            "name": "homelab",
-            "database": "postgres",
-            "username": "postgres",
-            "password": "Retail8-Ageless-Dislike"
-        }
-    ],
+    "sqltools.connections": [],
     "roo-cline.allowedCommands": [
         "npm test",
         "npm install",
