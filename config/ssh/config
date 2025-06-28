@@ -15,7 +15,6 @@ Host Mufasa
     HostName 192.168.88.226
     User richard
 
-# Global SSH settings (applied to all hosts)
 Host *
     # Security settings
     Protocol 2
@@ -24,20 +23,20 @@ Host *
     ControlMaster auto
     ControlPath ~/.ssh/sockets/%r@%h-%p
     ControlPersist 600
-    
+
     # Authentication (preserving your existing settings)
     AddKeysToAgent yes
     IdentityFile ~/.ssh/id_ed25519
     UseKeychain yes
-    
+
     # Performance
     Compression yes
-    
+
     # Security hardening
     HashKnownHosts yes
     ForwardAgent no
     ForwardX11 no
-    
+
     # Preferred algorithms (modern/secure)
     KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512
     HostKeyAlgorithms rsa-sha2-512,rsa-sha2-256,ssh-ed25519
@@ -45,7 +44,3 @@ Host *
     MACs hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,umac-128-etm@openssh.com
 
 # Additional host configurations can be added here
-# Host github.com
-#     HostName github.com
-#     User git
-#     IdentityFile ~/.ssh/id_ed25519_github
