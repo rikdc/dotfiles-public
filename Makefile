@@ -1,5 +1,5 @@
 # Declare phony targets (commands, not files)
-.PHONY: install link brew vscode-install vscode-save backup asdf-setup
+.PHONY: install link brew vscode-install vscode-save backup asdf-setup mcp-setup
 
 # Run dotbot install script
 install:
@@ -35,3 +35,7 @@ backup:
 # Setup asdf language plugins
 asdf-setup:
 	./config/asdf/setup-asdf.sh
+
+# Setup MCP servers for Claude Code
+mcp-setup:
+	./claude/install-mcp.sh
