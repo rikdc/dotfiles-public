@@ -21,8 +21,10 @@ if command -v lazygit &> /dev/null; then
 fi
 
 # Zoxide shortcuts (z is automatically added by zoxide init)
-# Adding common directory jumping patterns
-alias cd="z"
+# Only alias cd to z if zoxide is available and initialized
+if command -v zoxide &> /dev/null && command -v z &> /dev/null; then
+  alias cd="z"
+fi
 
 # Unix
 alias ln="ln -v"
