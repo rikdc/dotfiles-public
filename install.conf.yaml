@@ -9,6 +9,7 @@
     - ~/.vim/undo-history
     - ~/.config
     - ~/.claude
+    - ~/.ssh/sockets
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
@@ -31,6 +32,7 @@
       force: true
     ~/.zprofile: config/zsh/zprofile
     ~/.aliases: config/zsh/aliases
+    ~/.ssh/config: config/ssh/config
     ~/Library/Application Support/Code/User:
       glob: true
       path: config/vscode/*.json

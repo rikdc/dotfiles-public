@@ -28,5 +28,8 @@ if command -v direnv &> /dev/null; then
   eval "$(direnv hook zsh)"
 fi
 
+# Setup SSH agent (BitWarden or system fallback)
+source "$DOTFILES/config/zsh/ssh-agent.zsh"
+
 # Source local zshrc if exists
 test -f ~/.zshrc.local && source ~/.zshrc.local
