@@ -56,3 +56,27 @@ This is a personal dotfiles repository that uses **dotbot** for installation man
 
 ### Aliases and Tools
 The repository includes comprehensive aliases in `config/zsh/aliases` with modern CLI replacements and includes a specific Claude Code AI assistant alias with AWS Bedrock configuration.
+
+## Security Guidelines
+
+**CRITICAL**: Always follow security best practices when working with this repository:
+
+### Secrets and Credentials
+- **NEVER commit passwords, API keys, tokens, or any sensitive credentials**
+- **ALWAYS scan files before committing for exposed secrets**
+- Use environment variables or local configuration files for sensitive data
+- Database connections, API endpoints, and authentication should use placeholder values or be empty in committed files
+
+### Before Every Commit
+1. Review all changes for sensitive information
+2. Check VS Code settings, configuration files, and any new additions
+3. Use `.gitignore` patterns for files containing secrets
+4. Consider using tools like `git-secrets` or similar scanners
+
+### Safe Configuration Patterns
+- Database connections: Use empty arrays or placeholder configurations
+- API keys: Reference environment variables (e.g., `${API_KEY}`)
+- Passwords: Never hardcode, always use secure credential management
+- Personal information: Keep in `.local` files that are not committed
+
+This repository should serve as a template that others can safely use without exposing personal credentials or sensitive configuration.
