@@ -1,0 +1,43 @@
+# SSH Client Configuration
+# Managed by dotfiles
+
+# Global SSH settings
+Host *
+    # Security settings
+    Protocol 2
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    ControlMaster auto
+    ControlPath ~/.ssh/sockets/%r@%h-%p
+    ControlPersist 600
+    
+    # Authentication
+    IdentitiesOnly yes
+    AddKeysToAgent yes
+    UseKeychain yes
+    
+    # Performance
+    Compression yes
+    
+    # Security hardening
+    HashKnownHosts yes
+    ForwardAgent no
+    ForwardX11 no
+    
+    # Preferred algorithms (modern/secure)
+    KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512
+    HostKeyAlgorithms rsa-sha2-512,rsa-sha2-256,ssh-ed25519
+    Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
+    MACs hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,umac-128-etm@openssh.com
+
+# Example host configurations (customize as needed)
+# Host github.com
+#     HostName github.com
+#     User git
+#     IdentityFile ~/.ssh/id_ed25519_github
+
+# Host example.com
+#     HostName example.com
+#     User your-username
+#     Port 22
+#     IdentityFile ~/.ssh/id_rsa_example
