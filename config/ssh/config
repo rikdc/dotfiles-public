@@ -24,7 +24,6 @@ Host *
     ControlPath ~/.ssh/sockets/%r@%h-%p
     ControlPersist 600
 
-    # Authentication (preserving your existing settings)
     AddKeysToAgent yes
     IdentityFile ~/.ssh/id_ed25519
     UseKeychain yes
