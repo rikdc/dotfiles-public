@@ -5,6 +5,11 @@
 
 - clean: ["~"]
 
+- create:
+    - ~/.vim/undo-history
+    - ~/.config
+    - ~/.claude
+
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
   -
@@ -35,9 +40,3 @@
       glob: true
       path: .claude/commands/*
       force: true
-
-
-- create:
-    - ~/.vim/undo-history
-    - ~/.config
-    - ~/.claude
