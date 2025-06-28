@@ -1,7 +1,21 @@
 # SSH Client Configuration
 # Managed by dotfiles
 
-# Global SSH settings
+# Host-specific configurations
+Host homeassistant.local
+    HostName homeassistant.local
+    User root
+
+Host rafiki.local
+    HostName rafiki.local
+    User richard
+    IdentityFile ~/.ssh/id_rsa
+
+Host Mufasa
+    HostName 192.168.88.226
+    User richard
+
+# Global SSH settings (applied to all hosts)
 Host *
     # Security settings
     Protocol 2
@@ -11,9 +25,9 @@ Host *
     ControlPath ~/.ssh/sockets/%r@%h-%p
     ControlPersist 600
     
-    # Authentication
-    IdentitiesOnly yes
+    # Authentication (preserving your existing settings)
     AddKeysToAgent yes
+    IdentityFile ~/.ssh/id_ed25519
     UseKeychain yes
     
     # Performance
@@ -30,14 +44,8 @@ Host *
     Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
     MACs hmac-sha2-256-etm@openssh.com,hmac-sha2-512-etm@openssh.com,umac-128-etm@openssh.com
 
-# Example host configurations (customize as needed)
+# Additional host configurations can be added here
 # Host github.com
 #     HostName github.com
 #     User git
 #     IdentityFile ~/.ssh/id_ed25519_github
-
-# Host example.com
-#     HostName example.com
-#     User your-username
-#     Port 22
-#     IdentityFile ~/.ssh/id_rsa_example
