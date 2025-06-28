@@ -5,6 +5,11 @@
 
 - clean: ["~"]
 
+- create:
+    - ~/.vim/undo-history
+    - ~/.config
+    - ~/.claude
+
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
   -
@@ -30,8 +35,5 @@
       glob: true
       path: config/vscode/*.json
       force: true
-
-
-- create:
-    - ~/.vim/undo-history
-    - ~/.config
+    ~/.claude/settings.json: claude/settings.json
+    ~/.claude/commands: .claude/commands

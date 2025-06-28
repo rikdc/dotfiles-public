@@ -3,5 +3,13 @@
     {
         "key": "shift+cmd+s shift+cmd+s",
         "command": "git.stage"
+    },
+    {
+        "key": "shift+enter",
+        "command": "workbench.action.terminal.sendSequence",
+        "args": {
+            "text": "\\\r\n"
+        },
+        "when": "terminalFocus"
     }
 ]
