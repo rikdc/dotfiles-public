@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Claude Code AI assistant configuration integration
+- Claude Task Manager slash command for context isolation and focused task execution
 - Comprehensive README.md with features, installation, and usage documentation
 - CLAUDE.md file for AI assistant guidance
 - This changelog file to track changes
@@ -18,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Attribution
 - README.md improvements: Structure and content enhanced with Claude Code assistance
+- Claude Task Manager: Adapted from [grahama1970](https://gist.github.com/grahama1970/44a9da6a3da6769132037f06966945c2)
 
 ---
 
