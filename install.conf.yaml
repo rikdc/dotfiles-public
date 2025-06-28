@@ -36,7 +36,4 @@
       path: config/vscode/*.json
       force: true
     ~/.claude/settings.json: claude/settings.json
-    ~/.claude/commands:
-      glob: true
-      path: .claude/commands/*
-      force: true
+    ~/.claude/commands: .claude/commands
