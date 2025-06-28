@@ -1,0 +1,14 @@
+{
+  "description": "Common MCP servers for Claude Code (user scope)",
+  "note": "These servers are installed at user scope using install-mcp.sh script",
+  "servers": {
+    "context7": {
+      "command": "claude mcp add --scope user --transport http context7 https://mcp.context7.com/mcp",
+      "description": "Context7 MCP server for enhanced context management and retrieval"
+    },
+    "sequential-thinking": {
+      "command": "claude mcp add --scope user sequential-thinking npx @modelcontextprotocol/server-sequential-thinking",
+      "description": "Official MCP server for dynamic and reflective problem-solving through structured thinking"
+    }
+  }
+}
