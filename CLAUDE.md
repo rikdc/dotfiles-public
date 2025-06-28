@@ -37,6 +37,12 @@ This is a personal dotfiles repository that uses **dotbot** for installation man
 - `config/asdf/` - Language version management setup
 - `config/starship.toml` - Modern shell prompt configuration
 
+### Claude Code Integration
+- `.claude/` - Local repository-specific Claude Code configuration
+- `claude/` - Global Claude Code commands and settings for installation (symlinked to user's global claude directory)
+  - `claude/commands/` - Custom slash commands including task-manager and create-prd
+  - `claude/settings.json` - Claude Code settings with telemetry disabled
+
 ### Installation Flow
 1. Dotbot updates git submodules recursively
 2. Runs macOS setup scripts (Homebrew installation, system defaults)
