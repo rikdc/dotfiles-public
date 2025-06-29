@@ -9,6 +9,14 @@
     "sequential-thinking": {
       "command": "claude mcp add --scope user sequential-thinking npx @modelcontextprotocol/server-sequential-thinking",
       "description": "Official MCP server for dynamic and reflective problem-solving through structured thinking"
+    },
+    "memory": {
+      "command": "claude mcp add --scope user server-memory npx @modelcontextprotocol/server-memory",
+      "description": "Official MCP server to provides a knowledge graph-based persistent memory system"
+    },
+    "fetch": {
+      "command": "claude mcp add --scope user server-fetch npx @modelcontextprotocol/server-fetch",
+      "description": "Official MCP server to retrieve and convert web content into formats like Markdown, making it easier to process and analyze information from the internet."
     }
   }
 }
