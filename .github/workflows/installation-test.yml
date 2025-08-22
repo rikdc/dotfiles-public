@@ -1,0 +1,346 @@
+name: Installation Testing
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-macos-installation:
+    name: Test macOS Installation
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up environment
+        run: |
+          echo "🔧 Setting up test environment..."
+          # Create a temporary directory for testing
+          mkdir -p ~/dotfiles-test
+          cd ~/dotfiles-test
+          
+          # Copy dotfiles to test directory
+          cp -r $GITHUB_WORKSPACE/* .
+          
+          echo "✅ Environment setup complete"
+
+      - name: Test shell script syntax
+        run: |
+          echo "🔍 Testing shell script syntax..."
+          
+          # Test all shell scripts for syntax errors
+          find . -name "*.sh" -not -path "./.git/*" | while read -r script; do
+            echo "Testing syntax: $script"
+            bash -n "$script" || {
+              echo "❌ Syntax error in $script"
+              exit 1
+            }
+          done
+          
+          # Test zsh configuration files
+          if [ -f "config/zsh/zshrc" ]; then
+            echo "Testing zsh config syntax..."
+            zsh -n config/zsh/zshrc || {
+              echo "❌ Syntax error in zshrc"
+              exit 1
+            }
+          fi
+          
+          if [ -f "config/zsh/aliases" ]; then
+            echo "Testing zsh aliases syntax..."
+            zsh -n config/zsh/aliases || {
+              echo "❌ Syntax error in aliases"
+              exit 1
+            }
+          fi
+          
+          echo "✅ All shell scripts have valid syntax"
+
+      - name: Test Homebrew setup
+        run: |
+          echo "🍺 Testing Homebrew setup..."
+          
+          # Check if setup-homebrew.sh exists and is executable
+          if [ -f "config/macos/setup-homebrew.sh" ]; then
+            echo "Testing Homebrew setup script..."
+            bash -n config/macos/setup-homebrew.sh || {
+              echo "❌ Syntax error in setup-homebrew.sh"
+              exit 1
+            }
+            
+            # Test that essential packages are defined
+            if ! grep -q "PACKAGES=" config/macos/setup-homebrew.sh; then
+              echo "❌ PACKAGES array not found in setup-homebrew.sh"
+              exit 1
+            fi
+            
+            echo "✅ Homebrew setup script is valid"
+          else
+            echo "⚠️  setup-homebrew.sh not found"
+          fi
+
+      - name: Validate Brewfile
+        run: |
+          echo "🍺 Validating Brewfile..."
+          
+          if [ -f "config/macos/Brewfile" ]; then
+            # Check Brewfile syntax using brew bundle
+            cd config/macos
+            brew bundle check --verbose || {
+              echo "⚠️  Some packages in Brewfile are not installed (expected in CI)"
+              echo "Checking Brewfile syntax..."
+              
+              # Basic syntax validation
+              if ! grep -q '^tap\|^brew\|^cask' Brewfile; then
+                echo "❌ Brewfile appears to be empty or invalid"
+                exit 1
+              fi
+              
+              # Check for common syntax errors
+              if grep -q '[^"]"[^"]' Brewfile; then
+                echo "❌ Potential quoting issues in Brewfile"
+                exit 1
+              fi
+            }
+            
+            echo "✅ Brewfile validation completed"
+          else
+            echo "❌ Brewfile not found"
+            exit 1
+          fi
+
+      - name: Test asdf setup
+        run: |
+          echo "🔧 Testing asdf setup..."
+          
+          if [ -f "config/asdf/setup-asdf.sh" ]; then
+            echo "Testing asdf setup script syntax..."
+            bash -n config/asdf/setup-asdf.sh || {
+              echo "❌ Syntax error in setup-asdf.sh"
+              exit 1
+            }
+            
+            # Check that script has proper error handling
+            if ! grep -q "set -e" config/asdf/setup-asdf.sh; then
+              echo "⚠️  setup-asdf.sh missing 'set -e' error handling"
+            fi
+            
+            # Check for essential plugin installations
+            if ! grep -q "plugin add" config/asdf/setup-asdf.sh; then
+              echo "❌ No plugin installations found in setup-asdf.sh"
+              exit 1
+            fi
+            
+            echo "✅ asdf setup script is valid"
+          else
+            echo "⚠️  setup-asdf.sh not found"
+          fi
+
+      - name: Test dotbot configuration
+        run: |
+          echo "🔗 Testing dotbot configuration..."
+          
+          if [ -f "install.conf.yaml" ]; then
+            # Test YAML syntax
+            python3 -c "import yaml; yaml.safe_load(open('install.conf.yaml'))" || {
+              echo "❌ YAML syntax error in install.conf.yaml"
+              exit 1
+            }
+            
+            # Test dotbot dry run (simulation)
+            if [ -f "dotbot/bin/dotbot" ]; then
+              echo "Running dotbot dry run..."
+              python3 dotbot/bin/dotbot -d . -c install.conf.yaml --verbose || {
+                echo "❌ dotbot configuration test failed"
+                exit 1
+              }
+            else
+              echo "⚠️  dotbot submodule not found"
+            fi
+            
+            echo "✅ dotbot configuration is valid"
+          else
+            echo "❌ install.conf.yaml not found"
+            exit 1
+          fi
+
+      - name: Test configuration file syntax
+        run: |
+          echo "🔍 Testing configuration file syntax..."
+          
+          # Test JSON files
+          find . -name "*.json" -not -path "./.git/*" | while read -r file; do
+            echo "Validating JSON: $file"
+            python3 -m json.tool "$file" > /dev/null || {
+              echo "❌ JSON syntax error in $file"
+              exit 1
+            }
+          done
+          
+          # Test TOML files  
+          if [ -f "config/starship.toml" ]; then
+            echo "Validating TOML: config/starship.toml"
+            python3 -c "
+            import sys
+            try:
+                import tomllib
+            except ImportError:
+                try:
+                    import tomli as tomllib
+                except ImportError:
+                    print('⚠️  TOML library not available, skipping TOML validation')
+                    sys.exit(0)
+            
+            try:
+                with open('config/starship.toml', 'rb') as f:
+                    tomllib.load(f)
+                print('✅ TOML file is valid')
+            except Exception as e:
+                print(f'❌ TOML syntax error: {e}')
+                sys.exit(1)
+            "
+          fi
+          
+          echo "✅ Configuration file syntax validation completed"
+
+      - name: Test Makefile
+        run: |
+          echo "🔨 Testing Makefile..."
+          
+          if [ -f "Makefile" ]; then
+            # Test Makefile syntax
+            make -n --dry-run install || {
+              echo "❌ Makefile syntax error"
+              exit 1
+            }
+            
+            # Check for essential targets
+            if ! grep -q "^install:" Makefile; then
+              echo "❌ 'install' target not found in Makefile"
+              exit 1
+            fi
+            
+            if ! grep -q "^brew:" Makefile; then
+              echo "⚠️  'brew' target not found in Makefile"
+            fi
+            
+            echo "✅ Makefile is valid"
+          else
+            echo "❌ Makefile not found"
+            exit 1
+          fi
+
+  test-ubuntu-compatibility:
+    name: Test Ubuntu Compatibility
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zsh python3 python3-pip
+          pip3 install pyyaml
+
+      - name: Test cross-platform compatibility
+        run: |
+          echo "🐧 Testing Ubuntu compatibility..."
+          
+          # Test basic shell script syntax
+          find . -name "*.sh" -not -path "./.git/*" | while read -r script; do
+            echo "Testing syntax: $script"
+            bash -n "$script" || {
+              echo "❌ Syntax error in $script"
+              exit 1
+            }
+          done
+          
+          # Test zsh configuration (basic syntax)
+          if [ -f "config/zsh/zshrc" ]; then
+            zsh -n config/zsh/zshrc || {
+              echo "❌ zshrc syntax error"
+              exit 1
+            }
+          fi
+          
+          # Test dotbot configuration
+          if [ -f "install.conf.yaml" ] && [ -f "dotbot/bin/dotbot" ]; then
+            echo "Testing dotbot configuration..."
+            python3 dotbot/bin/dotbot -d . -c install.conf.yaml --verbose || {
+              echo "❌ dotbot configuration failed on Ubuntu"
+              exit 1
+            }
+          fi
+          
+          echo "✅ Ubuntu compatibility test passed"
+
+  test-configuration-integrity:
+    name: Test Configuration Integrity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Test configuration relationships
+        run: |
+          echo "🔍 Testing configuration integrity..."
+          
+          # Check that linked files exist
+          if [ -f "install.conf.yaml" ]; then
+            echo "Checking file references in install.conf.yaml..."
+            
+            # Extract file paths from YAML and check they exist
+            python3 -c "
+            import yaml
+            with open('install.conf.yaml') as f:
+                config = yaml.safe_load(f)
+            
+            # Check link section
+            for item in config:
+                if isinstance(item, dict) and 'link' in item:
+                    for target, source in item['link'].items():
+                        if isinstance(source, str):
+                            source_path = source
+                        elif isinstance(source, dict) and 'path' in source:
+                            source_path = source['path']
+                        else:
+                            continue
+                        
+                        # Check if source file exists
+                        import os
+                        if not os.path.exists(source_path):
+                            print(f'❌ Referenced file does not exist: {source_path}')
+                            exit(1)
+                        else:
+                            print(f'✅ Found: {source_path}')
+            "
+          fi
+          
+          # Check VS Code extensions file format
+          if [ -f "config/vscode/extensions.txt" ]; then
+            echo "Validating VS Code extensions format..."
+            if ! grep -q "^[a-zA-Z0-9.-]*\.[a-zA-Z0-9.-]*$" config/vscode/extensions.txt; then
+              echo "❌ Invalid extension format in extensions.txt"
+              exit 1
+            fi
+            echo "✅ VS Code extensions format is valid"
+          fi
+          
+          # Check for circular dependencies or conflicts
+          echo "Checking for potential conflicts..."
+          
+          # Look for conflicting shell configurations
+          if [ -f "config/zsh/zshrc" ] && grep -q "starship" config/zsh/zshrc && grep -q "ZSH_THEME=" config/zsh/zshrc; then
+            if ! grep -q "ZSH_THEME=\"\"" config/zsh/zshrc; then
+              echo "⚠️  Both oh-my-zsh theme and starship detected - may cause conflicts"
+            fi
+          fi
+          
+          echo "✅ Configuration integrity check completed"
