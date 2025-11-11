@@ -31,5 +31,8 @@ fi
 # Setup SSH agent (BitWarden or system fallback)
 source "$DOTFILES/config/zsh/ssh-agent.zsh"
 
+# Load git worktree management functions
+source "$DOTFILES/config/zsh/git-functions"
+
 # Source local zshrc if exists
 test -f ~/.zshrc.local && source ~/.zshrc.local

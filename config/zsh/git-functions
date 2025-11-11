@@ -1,0 +1,160 @@
+# Git Worktree Management Functions
+# These functions help manage git worktrees in a parent directory structure
+
+# gwa - Git Worktree Add
+# Creates a git worktree in the parent folder of the current repository
+# Usage: gwa <branch-name>
+gwa() {
+    if [ -z "$1" ]; then
+        echo "Usage: gwa <branch-name>"
+        return 1
+    fi
+
+    local branch_name="$1"
+    local repo_root=$(git rev-parse --show-toplevel 2>/dev/null)
+
+    if [ -z "$repo_root" ]; then
+        echo "Error: Not in a git repository"
+        return 1
+    fi
+
+    local repo_name=$(basename "$repo_root")
+    local parent_dir=$(dirname "$repo_root")
+    local work_dir="${parent_dir}/${repo_name}-work/${branch_name}"
+
+    echo "Creating worktree at: $work_dir"
+    git worktree add "$work_dir" "$branch_name"
+
+    # Optional: Jump to the new worktree if zoxide is available
+    if command -v z &> /dev/null; then
+        z "$work_dir"
+    fi
+}
+
+# gwd - Git Worktree Delete
+# Deletes a git worktree from the parent folder structure
+# Usage: gwd [-f] <branch-name>
+# Options:
+#   -f    Force deletion even if the worktree has uncommitted changes
+gwd() {
+    local force_flag=""
+
+    if [ "$1" = "-f" ]; then
+        force_flag="--force"
+        shift
+    fi
+
+    if [ -z "$1" ]; then
+        echo "Usage: gwd [-f] <branch-name>"
+        return 1
+    fi
+
+    local branch_name="$1"
+    local repo_root=$(git rev-parse --show-toplevel 2>/dev/null)
+
+    if [ -z "$repo_root" ]; then
+        echo "Error: Not in a git repository"
+        return 1
+    fi
+
+    local repo_name=$(basename "$repo_root")
+    local parent_dir=$(dirname "$repo_root")
+    local work_dir="${parent_dir}/${repo_name}-work/${branch_name}"
+
+    if [ ! -d "$work_dir" ]; then
+        echo "Error: Worktree not found at $work_dir"
+        return 1
+    fi
+
+    echo "Removing worktree at: $work_dir"
+    git worktree remove $force_flag "$work_dir"
+}
+
+# gwl - Git Worktree List
+# Lists all worktrees for the current repository
+# Usage: gwl
+gwl() {
+    local repo_root=$(git rev-parse --show-toplevel 2>/dev/null)
+
+    if [ -z "$repo_root" ]; then
+        echo "Error: Not in a git repository"
+        return 1
+    fi
+
+    echo "Worktrees for $(basename "$repo_root"):"
+    git worktree list
+}
+
+# gwo - Git Worktree Open
+# Opens a worktree directory in your editor or terminal
+# Usage: gwo <branch-name>
+gwo() {
+    if [ -z "$1" ]; then
+        echo "Usage: gwo <branch-name>"
+        return 1
+    fi
+
+    local branch_name="$1"
+    local repo_root=$(git rev-parse --show-toplevel 2>/dev/null)
+
+    if [ -z "$repo_root" ]; then
+        echo "Error: Not in a git repository"
+        return 1
+    fi
+
+    local repo_name=$(basename "$repo_root")
+    local parent_dir=$(dirname "$repo_root")
+    local work_dir="${parent_dir}/${repo_name}-work/${branch_name}"
+
+    if [ ! -d "$work_dir" ]; then
+        echo "Error: Worktree not found at $work_dir"
+        echo "Available worktrees:"
+        gwl
+        return 1
+    fi
+
+    # Use zoxide if available, otherwise cd
+    if command -v z &> /dev/null; then
+        z "$work_dir"
+    else
+        cd "$work_dir" || return 1
+    fi
+
+    # Optional: Open in VS Code if available
+    if command -v code &> /dev/null && [ -n "$VSCODE_INTEGRATION" ]; then
+        code "$work_dir"
+    fi
+}
+
+# Completion function for gwa - suggests git branches
+_gwa_completion() {
+    local branches
+    branches=(${(f)"$(git branch --all --format='%(refname:short)' 2>/dev/null | sed 's#origin/##')"})
+    _describe 'branch' branches
+}
+
+# Completion function for gwd - suggests existing worktree directories
+_gwd_completion() {
+    local repo_root=$(git rev-parse --show-toplevel 2>/dev/null)
+    if [ -n "$repo_root" ]; then
+        local repo_name=$(basename "$repo_root")
+        local parent_dir=$(dirname "$repo_root")
+        local work_base="${parent_dir}/${repo_name}-work"
+
+        if [ -d "$work_base" ]; then
+            local worktrees
+            worktrees=(${(f)"$(ls -1 "$work_base" 2>/dev/null)"})
+            _describe 'worktree' worktrees
+        fi
+    fi
+}
+
+# Completion function for gwo - same as gwd
+_gwo_completion() {
+    _gwd_completion
+}
+
+# Register the completion functions
+compdef _gwa_completion gwa
+compdef _gwd_completion gwd
+compdef _gwo_completion gwo
