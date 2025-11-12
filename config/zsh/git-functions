@@ -4,6 +4,7 @@
 # gwa - Git Worktree Add
 # Creates a git worktree in the parent folder of the current repository
 # Usage: gwa <branch-name>
+# If the branch doesn't exist, creates it from current HEAD
 gwa() {
     if [ -z "$1" ]; then
         echo "Usage: gwa <branch-name>"
@@ -22,8 +23,20 @@ gwa() {
     local parent_dir=$(dirname "$repo_root")
     local work_dir="${parent_dir}/${repo_name}-work/${branch_name}"
 
-    echo "Creating worktree at: $work_dir"
-    git worktree add "$work_dir" "$branch_name"
+    # Check if branch exists locally or remotely
+    if git show-ref --verify --quiet "refs/heads/${branch_name}"; then
+        # Local branch exists
+        echo "Creating worktree at: $work_dir (existing branch)"
+        git worktree add "$work_dir" "$branch_name"
+    elif git show-ref --verify --quiet "refs/remotes/origin/${branch_name}"; then
+        # Remote branch exists, track it
+        echo "Creating worktree at: $work_dir (tracking origin/${branch_name})"
+        git worktree add "$work_dir" "$branch_name"
+    else
+        # Branch doesn't exist, create new one
+        echo "Creating worktree at: $work_dir (new branch)"
+        git worktree add -b "$branch_name" "$work_dir"
+    fi
 
     # Optional: Jump to the new worktree if zoxide is available
     if command -v z &> /dev/null; then

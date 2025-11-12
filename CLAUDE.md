@@ -64,7 +64,18 @@ This is a personal dotfiles repository that uses **dotbot** for installation man
 - Includes direnv and zoxide initialization for enhanced shell experience
 
 ### Aliases and Tools
-The repository includes comprehensive aliases in `config/zsh/aliases` with modern CLI replacements and includes a specific Claude Code AI assistant alias with AWS Bedrock configuration.
+The repository includes comprehensive aliases and functions:
+- `config/zsh/aliases` - Modern CLI replacements and shortcuts
+- `config/zsh/git-functions` - Git worktree management functions
+
+#### Git Worktree Management
+Includes convenient functions for managing git worktrees in a parent directory structure:
+- `gwa <branch>` - Create a new worktree for a branch in `../repo-work/branch`
+- `gwd [-f] <branch>` - Delete a worktree (use -f to force)
+- `gwl` - List all worktrees for the current repository
+- `gwo <branch>` - Navigate to (and optionally open in VS Code) an existing worktree
+
+All worktree functions include zsh autocompletion for branch names and existing worktrees.
 
 ## Security Guidelines
 
