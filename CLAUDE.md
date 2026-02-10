@@ -32,7 +32,7 @@ This is a personal dotfiles repository that uses **dotbot** for installation man
 
 ### Configuration Organization
 - `config/git/` - Git configuration and global gitignore
-- `config/zsh/` - Zsh shell configuration including oh-my-zsh integration
+- `config/fish/` - Fish shell configuration (config.fish, conf.d/, functions/)
 - `config/vscode/` - VS Code settings, keybindings, and extensions list
 - `config/macos/` - macOS-specific setup scripts and Homebrew packages
 - `config/asdf/` - Language version management setup
@@ -53,18 +53,19 @@ This is a personal dotfiles repository that uses **dotbot** for installation man
 4. Sets up directory structure for vim and other tools
 
 ### Key Features
-- **Modern CLI Tools**: Replaces traditional tools (ls→exa, cat→bat, z for directory jumping)
+- **Modern CLI Tools**: Replaces traditional tools (ls→eza, cat→bat, z for directory jumping)
 - **Multi-Language Support**: asdf for managing Node.js, Python, Ruby, Go, Java, Terraform, kubectl
 - **Development Focused**: Includes tools like lazygit, ripgrep, fzf, docker, gh CLI
 - **macOS Integration**: Specific optimizations and app installations via Homebrew
 
 ### Environment Variables
 - `DOTFILES` - Points to installation directory (~/.dotfiles)
-- Uses oh-my-zsh with "intheloop" theme, enhanced by Starship prompt
+- Uses Fish shell with Starship prompt
 - Includes direnv and zoxide initialization for enhanced shell experience
 
-### Aliases and Tools
-The repository includes comprehensive aliases in `config/zsh/aliases` with modern CLI replacements and includes a specific Claude Code AI assistant alias with AWS Bedrock configuration.
+### Abbreviations and Functions
+- Fish abbreviations in `config/fish/conf.d/abbreviations.fish` replace traditional aliases (expand inline before execution)
+- Fish functions in `config/fish/functions/` for commands like `aic` (Claude Code via AWS Bedrock) and SSH agent management
 
 ## Security Guidelines
 

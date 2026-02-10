@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- Migrated shell from ZSH + Oh My ZSH to Fish shell
+- Replaced ZSH aliases with Fish abbreviations and functions
+- Replaced exa (deprecated) with eza in Brewfile and setup script
+- Removed duplicate zoxide entry from Brewfile
+
+### Removed
+- Oh My ZSH framework and submodule
+- ZSH configuration files (zshrc, zprofile, aliases, ssh-agent.zsh)
+
 ### Added
 - Claude Code AI assistant configuration integration
 - Claude Task Manager slash command for context isolation and focused task execution
