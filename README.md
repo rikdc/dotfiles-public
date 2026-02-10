@@ -4,9 +4,9 @@ A modern, comprehensive dotfiles configuration for macOS development environment
 
 ## Features
 
-- **Modern CLI Tools**: Enhanced replacements for standard tools (exa, bat, ripgrep, lazygit)
+- **Modern CLI Tools**: Enhanced replacements for standard tools (eza, bat, ripgrep, lazygit)
 - **Multi-Language Support**: Managed via asdf for Node.js, Python, Ruby, Go, Java, Terraform, kubectl
-- **Enhanced Shell**: Zsh with oh-my-zsh and Starship prompt for beautiful, informative terminal experience
+- **Enhanced Shell**: Fish shell with Starship prompt for beautiful, informative terminal experience
 - **Development Focused**: Pre-configured for Git, VS Code, Docker, and cloud development
 - **macOS Optimized**: Homebrew package management and system defaults configuration
 - **Automated Installation**: One-command setup with dotbot
@@ -14,11 +14,11 @@ A modern, comprehensive dotfiles configuration for macOS development environment
 ## What's Included
 
 ### Shell Configuration
-- Zsh with oh-my-zsh integration
+- Fish shell with auto-sourced conf.d and functions
 - Starship prompt with Git status, language versions, and system info
 - Smart directory jumping with zoxide
 - Environment management with direnv
-- Comprehensive aliases for modern CLI tools
+- Fish abbreviations for modern CLI tools (expand inline before execution)
 
 ### Development Tools
 - Git configuration with global gitignore
@@ -87,7 +87,7 @@ asdf global python 3.11.0
 
 ## Customization
 
-- **Local overrides**: Create `~/.zshrc.local` and `~/.aliases.local` for local customizations
+- **Local overrides**: Create `~/.config/fish/config.local.fish` for local customizations
 - **VS Code**: Extensions are managed via `config/vscode/extensions.txt`
 - **Packages**: Edit `config/macos/Brewfile` for Homebrew packages
 - **Shell prompt**: Customize `config/starship.toml` for prompt appearance
@@ -98,10 +98,13 @@ asdf global python 3.11.0
 ├── claude/             # Claude Code AI assistant settings
 ├── config/
 │   ├── asdf/           # Language version management
+│   ├── fish/           # Fish shell configuration
+│   │   ├── config.fish     # Main config (env vars, tool init)
+│   │   ├── conf.d/         # Auto-sourced config fragments
+│   │   └── functions/      # Lazy-loaded Fish functions
 │   ├── git/            # Git configuration
 │   ├── macos/          # macOS setup scripts and packages
 │   ├── vscode/         # VS Code settings and extensions
-│   ├── zsh/            # Shell configuration
 │   └── starship.toml   # Modern prompt configuration
 ├── install.conf.yaml   # Dotbot configuration
 ├── Makefile           # Common tasks

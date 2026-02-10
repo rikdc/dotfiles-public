@@ -14,13 +14,13 @@ PACKAGES=(
   "asdf"
   "fzf"
   "git"
-  "exa"
+  "eza"
   "neovim"
   "tree"
   "fd"
   "jq"
   "ripgrep"
-  "zsh"
+  "fish"
 )
 
 echo "Checking Homebrew packages..."
