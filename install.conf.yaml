@@ -8,6 +8,7 @@
 - create:
     - ~/.vim/undo-history
     - ~/.config
+    - ~/.config/fish
     - ~/.claude
     - ~/.ssh/sockets
 
@@ -21,17 +22,30 @@
     command: ./config/macos/macos-defaults.sh
     description: Setup MacOS Defaults
     stdout: true
+  -
+    command: |
+      if ! grep -q "$(which fish)" /etc/shells 2>/dev/null; then
+        echo "$(which fish)" | sudo tee -a /etc/shells
+      fi
+    description: Register Fish in /etc/shells
+    stdin: true
+    stdout: true
+  -
+    command: |
+      if [ "$(basename "$SHELL")" != "fish" ]; then
+        chsh -s "$(which fish)"
+      fi
+    description: Set Fish as default shell
+    stdin: true
+    stdout: true
 
 - link:
     ~/.gitconfig: config/git/git
     ~/.gitignore_global: config/git/gitignore_global
     ~/.config/starship.toml: config/starship.toml
-    ~/.oh-my-zsh: config/zsh/ohmyzsh
-    ~/.zshrc:
-      path: config/zsh/zshrc
+    ~/.config/fish:
+      path: config/fish
       force: true
-    ~/.zprofile: config/zsh/zprofile
-    ~/.aliases: config/zsh/aliases
     ~/.ssh/config: config/ssh/config
     ~/Library/Application Support/Code/User:
       glob: true
