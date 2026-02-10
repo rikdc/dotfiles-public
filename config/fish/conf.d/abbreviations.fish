@@ -11,11 +11,6 @@ if status is-interactive
         abbr --add lg lazygit
     end
 
-    # Zoxide replaces cd
-    if command -q zoxide
-        abbr --add cd z
-    end
-
     # Unix improvements
     abbr --add mkdir "mkdir -p"
     abbr --add ln "ln -v"
