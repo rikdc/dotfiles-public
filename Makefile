@@ -28,7 +28,7 @@ backup:
 	@BACKUP_DIR=backups/$(shell date +%Y%m%d_%H%M%S) && \
 	brew bundle dump --force --file=$$BACKUP_DIR/Brewfile.backup && \
 	code --list-extensions > $$BACKUP_DIR/vscode-extensions.backup && \
-	cp ~/.zshrc $$BACKUP_DIR/zshrc.backup 2>/dev/null || true && \
+	cp -r ~/.config/fish $$BACKUP_DIR/fish-config.backup 2>/dev/null || true && \
 	cp ~/.gitconfig $$BACKUP_DIR/gitconfig.backup 2>/dev/null || true && \
 	echo "Backup created in $$BACKUP_DIR"
 
