@@ -15,8 +15,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `make vscode-install` - Install VS Code extensions from extensions.txt
 - `make vscode-save` - Save current VS Code extensions to extensions.txt
 - `make asdf-setup` - Install and configure asdf language plugins
-- `make mcp-setup` - Install user-scope MCP servers for Claude Code
-
 ### Development Environment
 - `asdf install` - Install language versions specified in .tool-versions
 - `asdf global <plugin> <version>` - Set global version for a language
@@ -39,12 +37,7 @@ This is a personal dotfiles repository that uses **dotbot** for installation man
 - `config/starship.toml` - Modern shell prompt configuration
 
 ### Claude Code Integration
-- `.claude/` - Local repository-specific Claude Code configuration
-- `claude/` - Global Claude Code commands and settings for installation (symlinked to user's global claude directory)
-  - `claude/commands/` - Custom slash commands including task-manager and create-prd
-  - `claude/settings.json` - Claude Code settings with telemetry disabled
-  - `claude/mcp-servers.json` - Documentation of common user-scope MCP servers
-  - `claude/install-mcp.sh` - Script to install user-scope MCP servers
+- `.claude/` - Local repository-specific Claude Code configuration (commands, settings)
 
 ### Installation Flow
 1. Dotbot updates git submodules recursively

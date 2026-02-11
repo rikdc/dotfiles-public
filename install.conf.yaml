@@ -51,5 +51,4 @@
       glob: true
       path: config/vscode/*.json
       force: true
-    ~/.claude/settings.json: claude/settings.json
     ~/.claude/commands: .claude/commands
