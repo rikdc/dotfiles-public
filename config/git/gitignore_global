@@ -147,7 +147,6 @@ vendor/bundle
 lib/bundler/man
 .rbenv-version
 .rvmrc
-.ruby-version
 .ruby-gemset
 
 # Go
@@ -164,7 +163,6 @@ vendor/
 # Rust
 /target/
 **/*.rs.bk
-Cargo.lock
 
 # Java
 *.class
@@ -348,22 +346,8 @@ temp/
 *.zip
 
 ################
-# Version Management
-################
-
-# asdf
-.tool-versions
-
-# rbenv
-.ruby-version
-
-# pyenv
-.python-version
-
-# nvm
-.nvmrc
-
 # Terraform
+################
 *.tfstate
 *.tfstate.*
 .terraform/
@@ -377,10 +361,3 @@ temp/
 *.backup
 *.bak
 *.tmp
-
-# Lock files
-*.lock
-!package-lock.json
-!yarn.lock
-!Pipfile.lock
-!Gemfile.lock
