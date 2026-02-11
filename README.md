@@ -23,7 +23,6 @@ A modern, comprehensive dotfiles configuration for macOS development environment
 ### Development Tools
 - Git configuration with global gitignore
 - VS Code settings, keybindings, and extension management
-- Claude Code AI assistant configuration
 - Language version management via asdf
 - Docker and Kubernetes tools
 - AWS CLI and cloud development tools
@@ -95,7 +94,6 @@ asdf global python 3.11.0
 ## File Structure
 
 ```
-├── claude/             # Claude Code AI assistant settings
 ├── config/
 │   ├── asdf/           # Language version management
 │   ├── fish/           # Fish shell configuration

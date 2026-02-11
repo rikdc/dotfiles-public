@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed duplicate zoxide entry from Brewfile
 
 ### Removed
+- `claude/` directory — settings and MCP config now managed via separate plugin repos
 - Oh My ZSH framework and submodule
 - ZSH configuration files (zshrc, zprofile, aliases, ssh-agent.zsh)
 
