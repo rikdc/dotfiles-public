@@ -45,7 +45,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         # Dependencies for Python and Ruby compilation
         brew list openssl &> /dev/null || brew install openssl
         brew list readline &> /dev/null || brew install readline
-        brew list sqlite3 &> /dev/null || brew install sqlite3
+        brew list sqlite &> /dev/null || brew install sqlite
         brew list xz &> /dev/null || brew install xz
         brew list zlib &> /dev/null || brew install zlib
         print_success "Build dependencies installed"

@@ -86,4 +86,4 @@
 [init]
 	defaultBranch = main
 [credential]
-	helper = manager-core
+	helper = osxkeychain
